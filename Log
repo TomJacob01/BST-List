@@ -7,3 +7,4 @@ I added the size field to the nodes- so we can have a rank tree and implemnt lis
 I did the set functions of the Nodes.
 listToArray(), AVLTree empty(), AVLTree length(), AVLTree getRoot(), AVLTree retreive().
 I made the four Rotations, we need to check it
+I created a mini tester for some feilds of AVLNode- use it, we still need to work on the feilds.
