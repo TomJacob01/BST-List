@@ -1,7 +1,8 @@
-We will write here the changes we implemanted, the date it was done on and the plan of work.
+We will write here the changes we implemanted, the date it was done on.
 
 
 25/03: Tom
 I did the Construction of the AVLnodes 
-I added the size field to the nodes
+I added the size field to the nodes- so we can have a rank tree and implemnt listToArray() with it.
 I did the set functions of the Nodes.
+listToArray()
