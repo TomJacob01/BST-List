@@ -1,6 +1,6 @@
-# username - complete info
-# id1      - complete info
-# name1    - complete info
+# username - Tomjakob
+# id1      - 208938332
+# name1    - Tom Jacob
 # id2      - complete info
 # name2    - complete info
 
@@ -21,6 +21,8 @@ class AVLNode(object):
         self.right = None
         self.parent = None
         self.height = -1
+        self.size = 0 #I added this
+        self.balanceFactor = 0 #I added this
 
     """returns the left child
     @rtype: AVLNode
@@ -28,7 +30,7 @@ class AVLNode(object):
     """
 
     def getLeft(self):
-        return None
+        return self.left
 
     """returns the right child
 
@@ -37,7 +39,7 @@ class AVLNode(object):
     """
 
     def getRight(self):
-        return None
+        return self.right
 
     """returns the parent 
 
@@ -46,7 +48,7 @@ class AVLNode(object):
     """
 
     def getParent(self):
-        return None
+        return self.parent
 
     """return the value
 
@@ -55,7 +57,7 @@ class AVLNode(object):
     """
 
     def getValue(self):
-        return None
+        return self.value
 
     """returns the height
 
@@ -64,7 +66,23 @@ class AVLNode(object):
     """
 
     def getHeight(self):
-        return -1
+        return self.height
+
+    """returns the size
+        @rtype: int
+        @returns: the size, 1 if there is no children
+        """
+
+    def getSize(self):
+        return self.size
+
+    """returns the balanceFactor of the Node
+        @rtype: int
+        @returns: the balance factor of self, 0 if self id a virtual node
+        """
+
+    def getBalanceFactor(self):
+        return self.balanceFactor
 
     """sets left child
 
@@ -73,6 +91,10 @@ class AVLNode(object):
     """
 
     def setLeft(self, node):
+        if self.isRealNode() is False:
+            self.left = None
+            return
+        self.left = node
         return None
 
     """sets right child
@@ -82,6 +104,10 @@ class AVLNode(object):
     """
 
     def setRight(self, node):
+        if self.isRealNode() is False:
+            self.right = None
+            return
+        self.right = node
         return None
 
     """sets parent
@@ -91,6 +117,7 @@ class AVLNode(object):
     """
 
     def setParent(self, node):
+        self.parent = node
         return None
 
     """sets value
@@ -100,6 +127,9 @@ class AVLNode(object):
     """
 
     def setValue(self, value):
+        if self.isRealNode() is False:
+            self.value = None
+        self.value = value
         return None
 
     """sets the balance factor of the node
@@ -109,6 +139,10 @@ class AVLNode(object):
     """
 
     def setHeight(self, h):
+        if self.isRealNode() is False:
+            self.height = -1
+            return
+        self.height = 1 + max(self.left.height, self.right.height)
         return None
 
     """returns whether self is not a virtual node 
@@ -118,7 +152,35 @@ class AVLNode(object):
     """
 
     def isRealNode(self):
-        return False
+        if self is None:
+            return False
+        return True
+
+    """sets Node size
+
+        @type node: AVLNode
+        @param node: a node
+        """
+
+    def setSize(self):
+        if self.isRealNode() is False:
+            self.size = 0
+            return
+        self.size = 1 + self.left.size + self.right.size
+        return
+
+    """sets the balance factor of the node
+
+        @type node: AVLnode
+        @returns: 0 if self is a virtual node, int value otherwise.
+    """
+
+    def setBalanceFactor(self):
+        if self.isRealNode() is False:
+            self.balanceFactor = 0
+            return
+        self.balanceFactor = self.left.height - self.right.height
+        return
 
 
 """
@@ -132,8 +194,11 @@ class AVLTreeList(object):
 
     """
 
-    def __init__(self):
+    def __init__(self): ###we need to update it in insertion\deletion
         self.root = None
+        self.min = None #I Added this
+        self.max = None #I Added this
+        self.length = 0 #I Added this
 
     # add your fields here
 
@@ -143,8 +208,10 @@ class AVLTreeList(object):
     @returns: True if the list is empty, False otherwise
     """
 
-    def empty(self):
-        return None
+    def empty(self):  ###need to check if good
+        if self.root is None:
+            return True
+        return False
 
     """retrieves the value of the i'th item in the list
 
@@ -155,8 +222,21 @@ class AVLTreeList(object):
     @returns: the the value of the i'th item in the list
     """
 
-    def retrieve(self, i):
-        return None
+    def retrieve(self, i): ###need to check if good
+        x = self.getRoot()
+        xRank = x.left.size + 1
+        while i > 0:
+            if (i == 0) or (xRank == i):
+                return x.value
+            if xRank  < i:
+                i -= xRank
+                x = x.right
+                xRank = x.left.size + 1
+                continue
+            if xRank > i:
+                print('error in i value')
+                return
+
 
     """inserts val at position i in the list
 
@@ -191,7 +271,7 @@ class AVLTreeList(object):
     """
 
     def first(self):
-        return None
+        return self.min
 
     """returns the value of the last item in the list
 
@@ -200,7 +280,7 @@ class AVLTreeList(object):
     """
 
     def last(self):
-        return None
+        return self.max
 
     """returns an array representing list 
 
@@ -208,8 +288,12 @@ class AVLTreeList(object):
     @returns: a list of strings representing the data structure
     """
 
-    def listToArray(self):
-        return None
+    def listToArray(self): ###need to check if good
+        x = self.root
+        while x.isRealNode():
+            listToArray(x.left)
+            print(x.value)
+            listToArray(x.right)
 
     """returns the size of the list 
 
@@ -218,7 +302,8 @@ class AVLTreeList(object):
     """
 
     def length(self):
-        return None
+        x = getRoot(self)
+        return x.size
 
     """splits the list at the i'th index
 
@@ -262,6 +347,117 @@ class AVLTreeList(object):
     """
 
     def getRoot(self):
-        return None
+        if self.empty():
+            return  None
+        return self.root
+
+    """performs a left rotation
+
+        @type Node: AVLNode
+        @pre: node.getBalanceFactor = -2
+        @pre: node.right.getBalanceFactor = -1
+        @param node: The criminal Node that we need to right rotate
+        @rtype: Null
+        """
+
+    def leftRotation(self,node):
+        rNode = node.getRight
+        pNode = node.getParent
+        rlNode = rNode.getLeft
+        if pNode.left is node: ##setting pointers to perform the rotation
+            pNode.setLeft(rNode)
+        else:
+            pNode.setRight(rNode)
+        rNode.setParent(pNode)
+        node.setParent(rNode)
+        rNode.setLeft(node)
+        node.setRight(rlNode)
+        rlNode.setParent(node)
+        return
+
+    """performs a right rotation
+
+            @type Node: AVLNode
+            @pre: node.getBalanceFactor = 2
+            @pre: node.left.getBalanceFactor = 1
+            @param node: The criminal Node that we need to rotate
+            @rtype: Null
+            """
+
+    def rightRotation(self, node):
+        lNode = node.getLeft
+        pNode = node.getParent
+        lrNode = lNode.getRight
+        if pNode.left is node:  ##setting pointers to perform the rotation
+            pNode.setLeft(lNode)
+        else:
+            pNode.setRight(lNode)
+        lNode.setParent(pNode)
+        node.setParent(lNode)
+        lNode.setRight(node)
+        node.setLeft(lrNode)
+        lrNode.setParent(node)
+        return
+
+    """performs a left then a right rotation
+
+                @type Node: AVLNode
+                @pre: node.getBalanceFactor = 2
+                @pre: node.left.getBalanceFactor = -1
+                @param node: The criminal Node that we need to rotate
+                @rtype: Null
+                """
+
+    def leftThenRightRotation(self, node):
+        lNode = node.getLeft
+        pNode = node.getParent
+        theNode = lNode.getRight
+        aNode = theNode.getLeft
+        bNode= theNode.getRight
+        if pNode.left is node:
+            pNode.setLeft(theNode)
+        else:
+            pNode.setRight(theNode)
+        theNode.setParent(pNode)
+        theNode.setLeft(node)
+        node.setParent(theNode)
+        theNode.setRight(lNode)
+        lNode.setParent(theNode)
+        node.setLeft(bNode)
+        lNode.setRight(aNode)
+        return
+
+
+    """performs a right then a left rotation
+
+               @type Node: AVLNode
+               @pre: node.getBalanceFactor = -2
+               @pre: node.left.getBalanceFactor = 1
+               @param node: The criminal Node that we need to rotate
+               @rtype: Null
+               """
+
+
+    def rightThenLeftRotation(self, node):
+        rNode = node.getRight
+        pNode = node.getParent
+        theNode = rNode.getLeft
+        aNode = theNode.getLeft
+        bNode = theNode.getRight
+        if pNode.left is node:
+            pNode.setLeft(theNode)
+        else:
+            pNode.setRight(theNode)
+        theNode.setParent(pNode)
+        theNode.setLeft(node)
+        node.setParent(theNode)
+        theNode.setRight(rNode)
+        rNode.setParent(theNode)
+        node.setRight(aNode)
+        aNode.setParent(node)
+        rNode.setLeft(bNode)
+        bNode.setParent(rNode)
+        return
+
 
 
