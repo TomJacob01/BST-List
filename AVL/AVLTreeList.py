@@ -21,8 +21,8 @@ class AVLNode(object):
         self.right = None
         self.parent = None
         self.height = -1
-        self.size = 1 #I added this
-        self.balanceFactor = 0 #I added this
+        self.size = 0 
+        self.balanceFactor = 0 
 
     """returns the left child
     @rtype: AVLNode
@@ -66,16 +66,10 @@ class AVLNode(object):
     """
 
     def getHeight(self):
-        x = self.getLeft()
-        y = self.getRight()
-        if (x is None) and (y is not None):
-            h = 1 + y.getHeight()
-        if (y is None) and (x is not None):
-            h = 1 + x.getHeight()
-        elif (x is None) and (y is None):
-            h = 1
-        elif x.isRealNode and y.isRealNode:
-            h = 1 + max(x.getHeight(), y.getHeight())
+        try:
+            h = 1 + max(self.getLeft().getHeight(), self.getRight().getHeight())
+        except:
+            h = 0
         self.setHeight(h)
         return self.height
 
@@ -108,6 +102,8 @@ class AVLNode(object):
             self.left = None
             return
         self.left = node
+        if self.right is None:
+            self.right = AVLNode(None)
         return
 
     """sets right child
@@ -121,6 +117,8 @@ class AVLNode(object):
             self.right = None
             return
         self.right = node
+        if self.left is None:
+            self.left = AVLNode(None)
         return None
 
     """sets parent
@@ -177,8 +175,12 @@ class AVLNode(object):
         if self.isRealNode() is False:
             self.size = 0
             return
-        self.size = 1 + self.left.getSize() + self.right.getSize()
+        if self.getHeight() == 0:
+            self.size = 1
+        else:
+            self.size = 1 + self.getLeft().getSize() + self.getRight().getSize()
         return
+
 
     """sets the balance factor of the node
 
@@ -187,18 +189,9 @@ class AVLNode(object):
     """
 
     def setBalanceFactor(self):
-        if self.isRealNode() is False:
+        if (self.isRealNode() is False) or (self.getHeight() == 0):
             self.balanceFactor = 0
-        x = self.left
-        y = self.right
-        if (x is None) and (y is not None):
-            self.balanceFactor = -y.getHeight
-        if (y is None) and (x is not None):
-            self.balanceFactor = x.getHeight
-        elif (x is None) and (y is None):
-            self.balanceFactor = 0
-        elif x.isRealNode() & y.isRealNode():
-            self.balanceFactor = x.getHeight() - y.getHeight()
+        self.balanceFactor = self.left.getHeight() - self.right.getHeight()
         return
 
     """sets the balance factor,height and size of the node
@@ -518,18 +511,27 @@ def testNode():
     x = AVLNode("9")
     y = AVLNode("5")
     z = AVLNode("2")
-    w = AVLNode
-    x.setLeft(y)
-    x.setRight(z)
-    z.setLeft(w)
+    w = AVLNode("9")
+    t = AVLNode("3")
+    a = AVLNode("9")
+    b = AVLNode("5")
+    c = AVLNode("2")
+    d = AVLNode("9")
+    e = AVLNode("3")
+
+    x.setRight(a)
+    a.setRight(b)
+    b.setRight(c)
+    c.setRight(d)
+    d.setRight(y)
+    y.setRight(z)
+    z.setRight(w)
+
     print("x Height is :", x.getHeight())
-    print("x.size is:", x.size)
+    print("x size is:", x.getSize())
 
     print("x BalanceFactor is:" ,x.getBalanceFactor())
-    print(x.getSize())
+
     return
 
 testNode()
-
-
-
