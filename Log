@@ -1,0 +1,7 @@
+We will write here the changes we implemanted, the date it was done on and the plan of work.
+
+
+25/03:
+I did the Construction of the AVLnodes 
+I added the size field to the nodes
+I did the set functions of the Nodes.
