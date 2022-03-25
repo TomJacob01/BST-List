@@ -4,3 +4,4 @@ need to enter her name and id
 Both of us:
 need to create a tester and start to check the existing functions, and debugs the code
 we need to foucus on the AVLNode class
+we should start with debugging AVLNOde: setSize(), GetHeight(), setBalanceFactor() by this order
