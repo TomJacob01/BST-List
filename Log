@@ -8,3 +8,6 @@ I did the set functions of the Nodes.
 listToArray(), AVLTree empty(), AVLTree length(), AVLTree getRoot(), AVLTree retreive().
 I made the four Rotations, we need to check it
 I created a mini tester for some feilds of AVLNode- use it, we still need to work on the feilds.
+
+26/03: Tom
+I made tests for the AVLnode class, and the four rotations, and everything works :)
