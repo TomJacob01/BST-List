@@ -247,18 +247,25 @@ class AVLTreeList(object):
 
     def retrieve(self, i): ###need to check if good
         x = self.getRoot()
-        xRank = x.left.size + 1
+        xSize = x.getLeft().getSize() + 1
         while i > 0:
-            if (i == 0) or (xRank == i):
+            if (i == 0) or (xSize == i):
                 return x.value
-            if xRank < i:
-                i -= xRank
-                x = x.right
-                xRank = x.left.size + 1
+            if xSize < i:
+                i = i - xSize
+                x = x.getRight()
+                if x.getLeft() is None:
+                    xSize = 1
+                else:
+                    xSize = x.getLeft().getSize() + 1
                 continue
-            if xRank > i:
-                print('error in i value')
-                return
+            if xSize > i:
+                x = x.getLeft()
+                if x.getLeft() is None:
+                    xSize = 1
+                else:
+                    xSize = x.getLeft().getSize() + 1
+                continue
 
 
     """inserts val at position i in the list
@@ -313,10 +320,15 @@ class AVLTreeList(object):
 
     def listToArray(self): ###need to check if good
         x = self.root
-        while x.isRealNode():
-            listToArray(x.left)
-            print(x.value)
-            listToArray(x.right)
+        if (not self.empty()):
+            y = AVLTreeList()
+            y.root = x.getLeft()
+            y.listToArray()
+            if self.root.isRealNode():
+                print(x.value)
+            y = AVLTreeList()
+            y.root = x.getRight()
+            y.listToArray()
         return
 
     """returns the size of the list 
@@ -741,6 +753,104 @@ def testRIghtThenLeftRotation2():
         print('x.root.left.right is:', x.root.left.right.value)
         print('x.root.right.left is:', x.root.right.left.value)
 
+def testReterieve1():
+    y = AVLNode("6")
+    z = AVLNode("8")
+    a = AVLNode('a')
+    b = AVLNode('b')
+    x = AVLTreeList()
+    x.root = AVLNode("7")
+    x.root.setRight(z)
+    x.root.setLeft(y)
+    z.setLeft(b)
+    y.setRight(a)
+
+    for i in range(1,6):
+        print(x.retrieve(i))
+
+def testReterieve2():
+    y = AVLNode("6")
+    z = AVLNode("8")
+    a = AVLNode('a')
+    b = AVLNode('b')
+    x = AVLTreeList()
+    x.root = AVLNode("7")
+    x.root.setRight(y)
+    y.setRight(a)
+    a.setRight(b)
+    b.setRight(z)
+
+    for i in range(1,6):
+        print(x.retrieve(i))
+
+def testReterieve3():
+    y = AVLNode("6")
+    z = AVLNode("8")
+    a = AVLNode('a')
+    b = AVLNode('b')
+    x = AVLTreeList()
+    x.root = AVLNode("7")
+    x.root.setLeft(y)
+    y.setLeft(a)
+    a.setLeft(b)
+    b.setLeft(z)
+
+    for i in range(1,6):
+        print(x.retrieve(i))
+
+def testReterieve4():
+    y = AVLNode("6")
+    z = AVLNode("8")
+    a = AVLNode('a')
+    b = AVLNode('b')
+    x = AVLTreeList()
+    x.root = AVLNode("7")
+    x.root.setRight(y)
+    y.setLeft(a)
+    a.setLeft(b)
+    b.setLeft(z)
+
+    for i in range(1,6):
+        print(x.retrieve(i))
+
+def testListToArray1():
+    y = AVLNode("6")
+    z = AVLNode("8")
+    a = AVLNode('a')
+    b = AVLNode('b')
+    x = AVLTreeList()
+    x.root = AVLNode("7")
+    x.root.setLeft(y)
+    y.setLeft(a)
+    a.setLeft(b)
+    b.setLeft(z)
+    x.listToArray()
+
+def testListToArray2():
+    y = AVLNode("6")
+    z = AVLNode("8")
+    a = AVLNode('a')
+    b = AVLNode('b')
+    x = AVLTreeList()
+    x.root = AVLNode("7")
+    x.root.setRight(y)
+    y.setLeft(a)
+    a.setLeft(b)
+    b.setLeft(z)
+    x.listToArray()
+
+def testListToArray3():
+    y = AVLNode("6")
+    z = AVLNode("8")
+    a = AVLNode('a')
+    b = AVLNode('b')
+    x = AVLTreeList()
+    x.root = AVLNode("7")
+    x.root.setRight(z)
+    x.root.setLeft(y)
+    z.setLeft(b)
+    y.setRight(a)
+    x.listToArray()
 
 testNode1()
 testNode2()
@@ -754,3 +864,11 @@ testLeftThenRIghtRotation1()
 testLeftThenRIghtRotation2()
 testRIghtThenLeftRotation1()
 testRIghtThenLeftRotation2()
+#testReterieve1()   #VVV
+#testReterieve2()   #VVV
+#testReterieve3()   #VVV
+#testReterieve4()  #VVV
+#testListToArray1() #VVV
+#testListToArray2()  #VVV
+#testListToArray3() #VVV
+
