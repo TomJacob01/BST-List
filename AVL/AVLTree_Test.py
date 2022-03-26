@@ -148,6 +148,124 @@ class AVLTreeTest(unittest.TestCase):
             print('x.root.right.left is:', x.root.right.left.value)
             self.fail()
 
+    def testReterieve1():
+        y = AVLNode("6")
+        z = AVLNode("8")
+        a = AVLNode('a')
+        b = AVLNode('b')
+        x = AVLTreeList()
+        x.root = AVLNode("7")
+        x.root.setRight(z)
+        x.root.setLeft(y)
+        z.setLeft(b)
+        y.setRight(a)
+
+        for i in range(1,6):
+            print(x.retrieve(i))
+
+    def testReterieve2():
+        y = AVLNode("6")
+        z = AVLNode("8")
+        a = AVLNode('a')
+        b = AVLNode('b')
+        x = AVLTreeList()
+        x.root = AVLNode("7")
+        x.root.setRight(y)
+        y.setRight(a)
+        a.setRight(b)
+        b.setRight(z)
+
+        for i in range(1,6):
+            print(x.retrieve(i))
+
+    def testReterieve3():
+        y = AVLNode("6")
+        z = AVLNode("8")
+        a = AVLNode('a')
+        b = AVLNode('b')
+        x = AVLTreeList()
+        x.root = AVLNode("7")
+        x.root.setLeft(y)
+        y.setLeft(a)
+        a.setLeft(b)
+        b.setLeft(z)
+
+        for i in range(1,6):
+            print(x.retrieve(i))
+
+    def testReterieve4():
+        y = AVLNode("6")
+        z = AVLNode("8")
+        a = AVLNode('a')
+        b = AVLNode('b')
+        x = AVLTreeList()
+        x.root = AVLNode("7")
+        x.root.setRight(y)
+        y.setLeft(a)
+        a.setLeft(b)
+        b.setLeft(z)
+
+        for i in range(1,6):
+            print(x.retrieve(i))
+
+    def testListToArray1():
+        y = AVLNode("6")
+        z = AVLNode("8")
+        a = AVLNode('a')
+        b = AVLNode('b')
+        x = AVLTreeList()
+        x.root = AVLNode("7")
+        x.root.setLeft(y)
+        y.setLeft(a)
+        a.setLeft(b)
+        b.setLeft(z)
+        x.listToArray()
+
+    def testListToArray2():
+        y = AVLNode("6")
+        z = AVLNode("8")
+        a = AVLNode('a')
+        b = AVLNode('b')
+        x = AVLTreeList()
+        x.root = AVLNode("7")
+        x.root.setRight(y)
+        y.setLeft(a)
+        a.setLeft(b)
+        b.setLeft(z)
+        x.listToArray()
+
+    def testListToArray3():
+        y = AVLNode("6")
+        z = AVLNode("8")
+        a = AVLNode('a')
+        b = AVLNode('b')
+        x = AVLTreeList()
+        x.root = AVLNode("7")
+        x.root.setRight(z)
+        x.root.setLeft(y)
+        z.setLeft(b)
+        y.setRight(a)
+        x.listToArray()
+
+testNode1()
+testNode2()
+testNode3()
+testNode4()
+testRightRotation1()
+testRightRotation2()
+testLeftRotation1()
+testLeftRotation2()
+testLeftThenRIghtRotation1()
+testLeftThenRIghtRotation2()
+testRIghtThenLeftRotation1()
+testRIghtThenLeftRotation2()
+#testReterieve1()   #VVV
+#testReterieve2()   #VVV
+#testReterieve3()   #VVV
+#testReterieve4()  #VVV
+#testListToArray1() #VVV
+#testListToArray2()  #VVV
+#testListToArray3() #VVV
 
 if __name__ == '__main__':
     unittest.main()
