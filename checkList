@@ -6,8 +6,7 @@ need to enter your name and id
 please go through all the functions i implemanted today and try to understand them. if something is unclear let me know :)
 
 Both of us:
-need to create a tester for the existing functions, and debugs the code
-we need to focus on the AVLNode class and make sure it's Done :)
-we should start with debugging AVLNOde: setSize(), GetHeight(), setBalanceFactor() by this order
+functions: insert, Split, Concat, Search, delete
 
+testers: length, first, last and all of the above
 

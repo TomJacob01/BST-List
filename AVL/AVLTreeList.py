@@ -260,18 +260,25 @@ class AVLTreeList(object):
 
     def retrieve(self, i): ###need to check if good
         x = self.getRoot()
-        xRank = x.left.size + 1
+        xSize = x.getLeft().getSize() + 1
         while i > 0:
-            if (i == 0) or (xRank == i):
+            if (i == 0) or (xSize == i):
                 return x.value
-            if xRank < i:
-                i -= xRank
-                x = x.right
-                xRank = x.left.size + 1
+            if xSize < i:
+                i = i - xSize
+                x = x.getRight()
+                if x.getLeft() is None:
+                    xSize = 1
+                else:
+                    xSize = x.getLeft().getSize() + 1
                 continue
-            if xRank > i:
-                print('error in i value')
-                return
+            if xSize > i:
+                x = x.getLeft()
+                if x.getLeft() is None:
+                    xSize = 1
+                else:
+                    xSize = x.getLeft().getSize() + 1
+                continue
 
 
     """inserts val at position i in the list
@@ -326,10 +333,15 @@ class AVLTreeList(object):
 
     def listToArray(self): ###need to check if good
         x = self.root
-        while x.isRealNode():
-            listToArray(x.left)
-            print(x.value)
-            listToArray(x.right)
+        if (not self.empty()):
+            y = AVLTreeList()
+            y.root = x.getLeft()
+            y.listToArray()
+            if self.root.isRealNode():
+                print(x.value)
+            y = AVLTreeList()
+            y.root = x.getRight()
+            y.listToArray()
         return
 
     """returns the size of the list 
@@ -515,6 +527,5 @@ class AVLTreeList(object):
         if bNode is not None:
             bNode.setParent(rNode)
         return
-
 
 

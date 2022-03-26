@@ -11,3 +11,4 @@ I created a mini tester for some feilds of AVLNode- use it, we still need to wor
 
 26/03: Tom
 I made tests for the AVLnode class, and the four rotations, and everything works :)
+I made tests for the Reterieve() and ListToArray(), and everything works :)
