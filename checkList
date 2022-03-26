@@ -6,7 +6,8 @@ need to enter your name and id
 please go through all the functions i implemanted today and try to understand them. if something is unclear let me know :)
 
 Both of us:
-functions: insert, Split, Concat, Search, delete
+functions: insert, delete
+           Split, Concat, Search
 
 testers: length, first, last and all of the above
 
