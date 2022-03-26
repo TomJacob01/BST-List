@@ -21,8 +21,8 @@ class AVLNode(object):
         self.right = None
         self.parent = None
         self.height = -1
-        self.size = 0 
-        self.balanceFactor = 0 
+        self.size = 0
+        self.balanceFactor = 0
 
     """returns the left child
     @rtype: AVLNode
@@ -202,10 +202,8 @@ class AVLNode(object):
 
     def setAll(self):
         self.setBalanceFactor()
-        self.setSize()
         self.getHeight()
         return
-
 
 
 """
@@ -296,7 +294,7 @@ class AVLTreeList(object):
     """
 
     def first(self):
-        return self.min
+        return self.min.getValue()
 
     """returns the value of the last item in the list
 
@@ -305,7 +303,7 @@ class AVLTreeList(object):
     """
 
     def last(self):
-        return self.max
+        return self.max.getValue()
 
     """returns an array representing list 
 
@@ -387,22 +385,22 @@ class AVLTreeList(object):
         """
 
     def leftRotation(self,node):
-        rNode = node.getRight
-        pNode = node.getParent
-        rlNode = rNode.getLeft
-        if pNode.left is node:
-            pNode.setLeft(rNode)
-        else:
-            pNode.setRight(rNode)
-        rNode.setParent(pNode)
+        rNode = node.getRight()
+        pNode = node.getParent()
+        rlNode = rNode.getLeft()
+        if pNode is not  None:
+            if pNode.left is node:
+                pNode.setLeft(rNode)
+            else:
+                pNode.setRight(rNode)
+            rNode.setParent(pNode)
+        elif pNode is None:
+            rNode.setParent(None)
+            self.root = rNode
         node.setParent(rNode)
         rNode.setLeft(node)
         node.setRight(rlNode)
         rlNode.setParent(node)
-        ########
-        rNode.setAll
-        pNode.setAll
-        rlNode.setAll
         return
 
     """performs a right rotation
@@ -415,22 +413,22 @@ class AVLTreeList(object):
             """
 
     def rightRotation(self, node):
-        lNode = node.getLeft
-        pNode = node.getParent
-        lrNode = lNode.getRight
-        if pNode.left is node:  ##setting pointers to perform the rotation
-            pNode.setLeft(lNode)
-        else:
-            pNode.setRight(lNode)
-        lNode.setParent(pNode)
+        pNode = node.getParent()
+        lNode = node.getLeft()
+        lrNode = lNode.getRight()
+        if pNode is not None:
+            if pNode.left is node:
+                pNode.setLeft(lNode)
+            else:
+                pNode.setRight(lNode)
+            lNode.setParent(pNode)
+        elif pNode is None:
+            lNode.setParent(None)
+            self.root = lNode
         node.setParent(lNode)
         lNode.setRight(node)
         node.setLeft(lrNode)
         lrNode.setParent(node)
-        ########
-        lNode.setAll
-        pNode.setAll
-        lrNode.setAll
         return
 
     """performs a left then a right rotation
@@ -443,28 +441,30 @@ class AVLTreeList(object):
                 """
 
     def leftThenRightRotation(self, node):
-        lNode = node.getLeft
-        pNode = node.getParent
-        theNode = lNode.getRight
-        aNode = theNode.getLeft
-        bNode= theNode.getRight
-        if pNode.left is node:
-            pNode.setLeft(theNode)
-        else:
-            pNode.setRight(theNode)
-        theNode.setParent(pNode)
-        theNode.setLeft(node)
+        lNode = node.getLeft()
+        pNode = node.getParent()
+        theNode = lNode.getRight()
+        aNode = theNode.getLeft()
+        bNode= theNode.getRight()
+        if pNode is not None:
+            if pNode.left is node:
+                pNode.setLeft(theNode)
+            else:
+                pNode.setRight(theNode)
+            theNode.setParent(pNode)
+        elif pNode is None:
+            theNode.setParent(None)
+            self.root = theNode
+        theNode.setRight(node)
         node.setParent(theNode)
-        theNode.setRight(lNode)
+        theNode.setLeft(lNode)
         lNode.setParent(theNode)
         node.setLeft(bNode)
+        if bNode is not None:
+            bNode.setParent(node)
         lNode.setRight(aNode)
-        ########
-        lNode.setAll
-        pNode.setAll
-        theNode.setAll
-        aNode.setAll
-        bNode.setAll
+        if aNode is not None:
+            aNode.setParent(lNode)
         return
 
     """performs a right then a left rotation
@@ -477,37 +477,34 @@ class AVLTreeList(object):
                """
 
     def rightThenLeftRotation(self, node):
-        rNode = node.getRight
-        pNode = node.getParent
-        theNode = rNode.getLeft
-        aNode = theNode.getLeft
-        bNode = theNode.getRight
-        if pNode.left is node:
-            pNode.setLeft(theNode)
-        else:
-            pNode.setRight(theNode)
-        theNode.setParent(pNode)
+        rNode = node.getRight()
+        pNode = node.getParent()
+        theNode = rNode.getLeft()
+        aNode = theNode.getLeft()
+        bNode = theNode.getRight()
+        if pNode is not None:
+            if pNode.left is node:
+                pNode.setLeft(theNode)
+            else:
+                pNode.setRight(theNode)
+            theNode.setParent(pNode)
+        elif pNode is None:
+            theNode.setParent(None)
+            self.root = theNode
         theNode.setLeft(node)
         node.setParent(theNode)
         theNode.setRight(rNode)
         rNode.setParent(theNode)
         node.setRight(aNode)
-        aNode.setParent(node)
+        if aNode is not None:
+            aNode.setParent(node)
         rNode.setLeft(bNode)
-        bNode.setParent(rNode)
-        ####### not sure if neccesry
-        rNode.setAll
-        pNode.setAll
-        theNode.setAll
-        aNode.setAll
-        bNode.setAll
+        if bNode is not None:
+            bNode.setParent(rNode)
         return
 
 
-
-
-
-def testNode():
+def testNode1():
     x = AVLNode("9")
     y = AVLNode("5")
     z = AVLNode("2")
@@ -526,12 +523,234 @@ def testNode():
     d.setRight(y)
     y.setRight(z)
     z.setRight(w)
-
-    print("x Height is :", x.getHeight())
-    print("x size is:", x.getSize())
-
-    print("x BalanceFactor is:" ,x.getBalanceFactor())
-
+    if (x.getHeight() != 7):
+        print("x Height is :", x.getHeight(), 'it should be 7')
+    if x.getSize() != 8:
+        print("x size is:", x.getSize(), 'it should be 8')
+    if x.getBalanceFactor() != -6:
+        print("x BalanceFactor is:" ,x.getBalanceFactor(), 'it sould be -6')
     return
 
-testNode()
+def testNode2():
+    x = AVLNode("9")
+    y = AVLNode("5")
+    z = AVLNode("2")
+    w = AVLNode("9")
+    t = AVLNode("3")
+    a = AVLNode("9")
+    b = AVLNode("5")
+    c = AVLNode("2")
+    d = AVLNode("9")
+    e = AVLNode("3")
+
+    x.setLeft(a)
+    a.setRight(b)
+    x.setRight(c)
+    c.setRight(d)
+    c.setLeft(y)
+    a.setRight(z)
+    a.setLeft(w)
+    if (x.getHeight() != 2):
+        print("x Height is :", x.getHeight(), 'it should be 2')
+    if x.getSize() != 7:
+        print("x size is:", x.getSize(), 'it should be 7')
+    if x.getBalanceFactor() != 0:
+        print("x BalanceFactor is:" ,x.getBalanceFactor(), 'it sould be 0')
+    return
+
+def testNode3():
+    x = AVLNode("9")
+    y = AVLNode("5")
+    z = AVLNode("2")
+    w = AVLNode("9")
+    t = AVLNode("3")
+    a = AVLNode("9")
+    b = AVLNode("5")
+    c = AVLNode("2")
+    d = AVLNode("9")
+    e = AVLNode("3")
+
+    x.setLeft(a)
+    a.setRight(b)
+    x.setRight(c)
+    c.setRight(d)
+    c.setLeft(y)
+    a.setRight(z)
+    z.setLeft(w)
+    if (x.getHeight() != 3):
+        print("x Height is :", x.getHeight(), 'it should be 3')
+    if x.getSize() != 7:
+        print("x size is:", x.getSize(), 'it should be 7')
+    if x.getBalanceFactor() != 1:
+        print("x BalanceFactor is:" ,x.getBalanceFactor(), 'it sould be 1')
+    return
+
+def testNode4():
+    x = AVLNode("9")
+    y = AVLNode("5")
+    z = AVLNode("2")
+    w = AVLNode("9")
+    t = AVLNode("3")
+    a = AVLNode("9")
+    b = AVLNode("5")
+    c = AVLNode("2")
+    d = AVLNode("9")
+    e = AVLNode("3")
+
+    x.setLeft(a)
+    a.setRight(b)
+    x.setRight(c)
+    c.setRight(d)
+    c.setLeft(y)
+    a.setRight(z)
+    z.setLeft(w)
+    w.setRight(e)
+    if (x.getHeight() != 4):
+        print("x Height is :", x.getHeight(), 'it should be 4')
+    if x.getSize() != 8:
+        print("x size is:", x.getSize(), 'it should be 7')
+    if x.getBalanceFactor() != 2:
+        print("x BalanceFactor is:" ,x.getBalanceFactor(), 'it sould be 1')
+    return
+
+def testRightRotation1():
+    y = AVLNode("7")
+    z = AVLNode("6")
+    x = AVLTreeList()
+    x.root = AVLNode("8")
+    x.root.setLeft(y)
+    y.setLeft(z)
+    x.rightRotation(x.root)
+    if x.root != y:
+        print('x.root is:' ,x.root.value)
+        print('x.root.left is:', x.root.left.value)
+        print('x.root.right is:', x.root.right.value)
+
+def testRightRotation2():
+    y = AVLNode("7")
+    z = AVLNode("6")
+    b = AVLNode("7R")
+    c = AVLNode("8R")
+    x = AVLTreeList()
+    x.root = AVLNode("8")
+    x.root.setLeft(y)
+    x.root.setRight(c)
+    y.setLeft(z)
+    y.setRight(b)
+    x.rightRotation(x.root)
+    if (x.root != y) or (x.root.right.right != c):
+        print('x.root is:' ,x.root.value)
+        print('x.root.left is:', x.root.left.value)
+        print('x.root.right is:', x.root.right.value)
+        print('x.root.right.right is:', x.root.right.right.value)
+        print('x.root.right.left is:', x.root.right.left.value)
+
+def testLeftRotation1():
+    y = AVLNode("7")
+    z = AVLNode("8")
+    x = AVLTreeList()
+    x.root = AVLNode("6")
+    x.root.setRight(y)
+    y.setRight(z)
+    x.leftRotation(x.root)
+    if x.root != y:
+        print('x.root is:' ,x.root.value)
+        print('x.root.left is:', x.root.left.value)
+        print('x.root.left is:', x.root.right.value)
+
+def testLeftRotation2():
+    y = AVLNode("7")
+    z = AVLNode("8")
+    x = AVLTreeList()
+    x.root = AVLNode("6")
+    a = AVLNode('6L')
+    b = AVLNode('7L')
+    x.root.setRight(y)
+    x.root.setLeft(a)
+    y.setRight(z)
+    y.setLeft(b)
+    x.leftRotation(x.root)
+    if (x.root != y) or (x.root.left.right != b):
+        print('x.root is:' ,x.root.value)
+        print('x.root.left is:', x.root.left.value)
+        print('x.root.right is:', x.root.right.value)
+        print('x.root.left.right is:', x.root.left.right.value)
+        print('x.root.right.left is:', x.root.left.left.value)
+
+def testLeftThenRIghtRotation1():
+    y = AVLNode("7")
+    z = AVLNode("6")
+    x = AVLTreeList()
+    x.root = AVLNode("8")
+    x.root.setLeft(z)
+    z.setRight(y)
+    x.leftThenRightRotation(x.root)
+    if x.root is not y and x.root.left is not z:
+        print('x.root is:', x.root.value)
+        print('x.root.left is:', x.root.left.value)
+        print('x.root.right is:', x.root.right.value)
+
+def testLeftThenRIghtRotation2():
+    y = AVLNode("7")
+    a = AVLNode('a')
+    b = AVLNode('b')
+    z = AVLNode("6")
+    x = AVLTreeList()
+    x.root = AVLNode("8")
+    x.root.setLeft(z)
+    z.setRight(y)
+    y.setLeft(a)
+    y.setRight(b)
+    x.leftThenRightRotation(x.root)
+    if (x.root != y) or (x.root.left.right != a):
+        print('x.root is:', x.root.value)
+        print('x.root.left is:', x.root.left.value)
+        print('x.root.right is:', x.root.right.value)
+        print('x.root.left.right is:', x.root.left.right.value)
+        print('x.root.right.left is:', x.root.right.left.value)
+
+def testRIghtThenLeftRotation1():
+    y = AVLNode("7")
+    z = AVLNode("8")
+    x = AVLTreeList()
+    x.root = AVLNode("6")
+    x.root.setRight(z)
+    z.setLeft(y)
+    x.rightThenLeftRotation(x.root)
+    if x.root is not y and x.root.left is not z:
+        print('x.root is:', x.root.value)
+        print('x.root.left is:', x.root.left.value)
+        print('x.root.right is:', x.root.right.value)
+
+def testRIghtThenLeftRotation2():
+    y = AVLNode("7")
+    z = AVLNode("8")
+    a = AVLNode('a')
+    b = AVLNode('b')
+    x = AVLTreeList()
+    x.root = AVLNode("6")
+    x.root.setRight(z)
+    z.setLeft(y)
+    y.setLeft(a)
+    y.setRight(b)
+    x.rightThenLeftRotation(x.root)
+    if (x.root != y) or (x.root.left.right != a):
+        print('x.root is:', x.root.value)
+        print('x.root.left is:', x.root.left.value)
+        print('x.root.right is:', x.root.right.value)
+        print('x.root.left.right is:', x.root.left.right.value)
+        print('x.root.right.left is:', x.root.right.left.value)
+
+
+testNode1()
+testNode2()
+testNode3()
+testNode4()
+testRightRotation1()
+testRightRotation2()
+testLeftRotation1()
+testLeftRotation2()
+testLeftThenRIghtRotation1()
+testLeftThenRIghtRotation2()
+testRIghtThenLeftRotation1()
+testRIghtThenLeftRotation2()
