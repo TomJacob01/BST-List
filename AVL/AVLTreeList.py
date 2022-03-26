@@ -1,8 +1,9 @@
-# username - Tomjakob
+# username1 - Tomjakob
 # id1      - 208938332
 # name1    - Tom Jacob
-# id2      - complete info
-# name2    - complete info
+# username2 - adelinay
+# id2      - 209225069
+# name2    - Adelina Yershov
 
 
 """A class representing a node in an AVL tree"""
@@ -13,16 +14,28 @@ class AVLNode(object):
 
     @type value: str
     @param value: data of your node
+
+    @type isReal: bool
+    @param isReal: whether the node is real or not
     """
 
-    def __init__(self, value):
+    def __init__(self, value, isReal=True):
         self.value = value
-        self.left = None
-        self.right = None
         self.parent = None
-        self.height = -1
-        self.size = 0
-        self.balanceFactor = 0
+        self.isReal = isReal
+
+        if self.isReal:
+            self.left = AVLNode(None, isReal=False)
+            self.right = AVLNode(None, isReal=False)
+            self.height = 0
+            self.size = 1
+            self.balanceFactor = 0
+        else:
+            self.left = None
+            self.right = None
+            self.height = -1
+            self.size = 0
+            self.balanceFactor = 0
 
     """returns the left child
     @rtype: AVLNode
@@ -66,70 +79,82 @@ class AVLNode(object):
     """
 
     def getHeight(self):
-        try:
-            h = 1 + max(self.getLeft().getHeight(), self.getRight().getHeight())
-        except:
-            h = 0
-        self.setHeight(h)
         return self.height
 
     """returns the size
-        @rtype: int
-        @returns: the size, 1 if there is no children
-        """
+    
+    @rtype: int
+    @returns: the size, 1 if there is no children
+    """
 
     def getSize(self):
-        self.setSize()
         return self.size
 
     """returns the balanceFactor of the Node
-        @rtype: int
-        @returns: the balance factor of self, 0 if self id a virtual node
-        """
+    
+    @rtype: int
+    @returns: the balance factor of self, 0 if self is a virtual node
+    """
 
     def getBalanceFactor(self):
-        self.setBalanceFactor()
         return self.balanceFactor
 
     """sets left child
+    
+    @note Run in O(log(n)) time
 
     @type node: AVLNode
     @param node: a node
     """
 
     def setLeft(self, node):
-        if self.isRealNode() is False:
-            self.left = None
-            return
-        self.left = node
-        if self.right is None:
-            self.right = AVLNode(None)
-        return
+        if self.isReal:
+            self.left = node
+            node.parent = self
+
+            current = self
+            while current != None:
+                current.setAll()
+                current = current.parent
+
+
 
     """sets right child
+    
+    @note Run in O(log(n)) time
 
     @type node: AVLNode
     @param node: a node
     """
 
     def setRight(self, node):
-        if self.isRealNode() is False:
-            self.right = None
-            return
-        self.right = node
-        if self.left is None:
-            self.left = AVLNode(None)
-        return None
+        if self.isReal:
+            self.right = node
+            node.parent = self
+
+            current = self
+            while current != None:
+                current.setAll()
+                current = current.parent
+
 
     """sets parent
+    
+    @note Run in O(log(n)) time
 
     @type node: AVLNode
     @param node: a node
     """
 
     def setParent(self, node):
-        self.parent = node
-        return None
+        if self.isReal:
+            self.parent = node
+            # TODO: update the node.right or node.left correspondingly
+
+            current = self.parent
+            while current != None:
+                current.setAll()
+                current = current.parent
 
     """sets value
 
@@ -138,10 +163,8 @@ class AVLNode(object):
     """
 
     def setValue(self, value):
-        if self.isRealNode() is False:
-            self.value = None
-        self.value = value
-        return None
+        if self.isReal:
+            self.value = value
 
     """sets the balance factor of the node
 
@@ -150,10 +173,8 @@ class AVLNode(object):
     """
 
     def setHeight(self, h):
-        if self.isRealNode() is False:
-            self.height = -1
-        self.height = h
-        return
+        if self.isReal:
+            self.height = h
 
     """returns whether self is not a virtual node 
 
@@ -162,48 +183,40 @@ class AVLNode(object):
     """
 
     def isRealNode(self):
-        if (self is None) or (self.value is None):
-            return False
-        return True
+        return self.isReal
 
     """sets Node size
 
-        @type node: AVLNode
-        """
+    @note No parameters
+    """
 
     def setSize(self):
-        if self.isRealNode() is False:
+        if not self.isReal:
             self.size = 0
-            return
-        if self.getHeight() == 0:
-            self.size = 1
         else:
-            self.size = 1 + self.getLeft().getSize() + self.getRight().getSize()
-        return
+            self.size = 1 + self.left.size + self.right.size
 
 
     """sets the balance factor of the node
 
-        @type node: AVLnode
-        @param node: a node
+    @note No parameters
     """
 
     def setBalanceFactor(self):
-        if (self.isRealNode() is False) or (self.getHeight() == 0):
+        if self.isReal is False:
             self.balanceFactor = 0
-        self.balanceFactor = self.left.getHeight() - self.right.getHeight()
-        return
+        self.balanceFactor = self.left.height - self.right.height
 
     """sets the balance factor,height and size of the node
 
-            @type node: AVLnode
-            @param node: a node
-        """
+    @note No parameters
+    """
 
     def setAll(self):
-        self.setBalanceFactor()
-        self.getHeight()
-        return
+        if self.isReal:
+            self.setBalanceFactor()
+            self.setHeight(max(self.right.height, self.left.height) + 1)
+            self.setSize()
 
 
 """
@@ -515,360 +528,4 @@ class AVLTreeList(object):
             bNode.setParent(rNode)
         return
 
-
-def testNode1():
-    x = AVLNode("9")
-    y = AVLNode("5")
-    z = AVLNode("2")
-    w = AVLNode("9")
-    t = AVLNode("3")
-    a = AVLNode("9")
-    b = AVLNode("5")
-    c = AVLNode("2")
-    d = AVLNode("9")
-    e = AVLNode("3")
-
-    x.setRight(a)
-    a.setRight(b)
-    b.setRight(c)
-    c.setRight(d)
-    d.setRight(y)
-    y.setRight(z)
-    z.setRight(w)
-    if (x.getHeight() != 7):
-        print("x Height is :", x.getHeight(), 'it should be 7')
-    if x.getSize() != 8:
-        print("x size is:", x.getSize(), 'it should be 8')
-    if x.getBalanceFactor() != -6:
-        print("x BalanceFactor is:" ,x.getBalanceFactor(), 'it sould be -6')
-    return
-
-def testNode2():
-    x = AVLNode("9")
-    y = AVLNode("5")
-    z = AVLNode("2")
-    w = AVLNode("9")
-    t = AVLNode("3")
-    a = AVLNode("9")
-    b = AVLNode("5")
-    c = AVLNode("2")
-    d = AVLNode("9")
-    e = AVLNode("3")
-
-    x.setLeft(a)
-    a.setRight(b)
-    x.setRight(c)
-    c.setRight(d)
-    c.setLeft(y)
-    a.setRight(z)
-    a.setLeft(w)
-    if (x.getHeight() != 2):
-        print("x Height is :", x.getHeight(), 'it should be 2')
-    if x.getSize() != 7:
-        print("x size is:", x.getSize(), 'it should be 7')
-    if x.getBalanceFactor() != 0:
-        print("x BalanceFactor is:" ,x.getBalanceFactor(), 'it sould be 0')
-    return
-
-def testNode3():
-    x = AVLNode("9")
-    y = AVLNode("5")
-    z = AVLNode("2")
-    w = AVLNode("9")
-    t = AVLNode("3")
-    a = AVLNode("9")
-    b = AVLNode("5")
-    c = AVLNode("2")
-    d = AVLNode("9")
-    e = AVLNode("3")
-
-    x.setLeft(a)
-    a.setRight(b)
-    x.setRight(c)
-    c.setRight(d)
-    c.setLeft(y)
-    a.setRight(z)
-    z.setLeft(w)
-    if (x.getHeight() != 3):
-        print("x Height is :", x.getHeight(), 'it should be 3')
-    if x.getSize() != 7:
-        print("x size is:", x.getSize(), 'it should be 7')
-    if x.getBalanceFactor() != 1:
-        print("x BalanceFactor is:" ,x.getBalanceFactor(), 'it sould be 1')
-    return
-
-def testNode4():
-    x = AVLNode("9")
-    y = AVLNode("5")
-    z = AVLNode("2")
-    w = AVLNode("9")
-    t = AVLNode("3")
-    a = AVLNode("9")
-    b = AVLNode("5")
-    c = AVLNode("2")
-    d = AVLNode("9")
-    e = AVLNode("3")
-
-    x.setLeft(a)
-    a.setRight(b)
-    x.setRight(c)
-    c.setRight(d)
-    c.setLeft(y)
-    a.setRight(z)
-    z.setLeft(w)
-    w.setRight(e)
-    if (x.getHeight() != 4):
-        print("x Height is :", x.getHeight(), 'it should be 4')
-    if x.getSize() != 8:
-        print("x size is:", x.getSize(), 'it should be 7')
-    if x.getBalanceFactor() != 2:
-        print("x BalanceFactor is:" ,x.getBalanceFactor(), 'it sould be 1')
-    return
-
-def testRightRotation1():
-    y = AVLNode("7")
-    z = AVLNode("6")
-    x = AVLTreeList()
-    x.root = AVLNode("8")
-    x.root.setLeft(y)
-    y.setLeft(z)
-    x.rightRotation(x.root)
-    if x.root != y:
-        print('x.root is:' ,x.root.value)
-        print('x.root.left is:', x.root.left.value)
-        print('x.root.right is:', x.root.right.value)
-
-def testRightRotation2():
-    y = AVLNode("7")
-    z = AVLNode("6")
-    b = AVLNode("7R")
-    c = AVLNode("8R")
-    x = AVLTreeList()
-    x.root = AVLNode("8")
-    x.root.setLeft(y)
-    x.root.setRight(c)
-    y.setLeft(z)
-    y.setRight(b)
-    x.rightRotation(x.root)
-    if (x.root != y) or (x.root.right.right != c):
-        print('x.root is:' ,x.root.value)
-        print('x.root.left is:', x.root.left.value)
-        print('x.root.right is:', x.root.right.value)
-        print('x.root.right.right is:', x.root.right.right.value)
-        print('x.root.right.left is:', x.root.right.left.value)
-
-def testLeftRotation1():
-    y = AVLNode("7")
-    z = AVLNode("8")
-    x = AVLTreeList()
-    x.root = AVLNode("6")
-    x.root.setRight(y)
-    y.setRight(z)
-    x.leftRotation(x.root)
-    if x.root != y:
-        print('x.root is:' ,x.root.value)
-        print('x.root.left is:', x.root.left.value)
-        print('x.root.left is:', x.root.right.value)
-
-def testLeftRotation2():
-    y = AVLNode("7")
-    z = AVLNode("8")
-    x = AVLTreeList()
-    x.root = AVLNode("6")
-    a = AVLNode('6L')
-    b = AVLNode('7L')
-    x.root.setRight(y)
-    x.root.setLeft(a)
-    y.setRight(z)
-    y.setLeft(b)
-    x.leftRotation(x.root)
-    if (x.root != y) or (x.root.left.right != b):
-        print('x.root is:' ,x.root.value)
-        print('x.root.left is:', x.root.left.value)
-        print('x.root.right is:', x.root.right.value)
-        print('x.root.left.right is:', x.root.left.right.value)
-        print('x.root.right.left is:', x.root.left.left.value)
-
-def testLeftThenRIghtRotation1():
-    y = AVLNode("7")
-    z = AVLNode("6")
-    x = AVLTreeList()
-    x.root = AVLNode("8")
-    x.root.setLeft(z)
-    z.setRight(y)
-    x.leftThenRightRotation(x.root)
-    if x.root is not y and x.root.left is not z:
-        print('x.root is:', x.root.value)
-        print('x.root.left is:', x.root.left.value)
-        print('x.root.right is:', x.root.right.value)
-
-def testLeftThenRIghtRotation2():
-    y = AVLNode("7")
-    a = AVLNode('a')
-    b = AVLNode('b')
-    z = AVLNode("6")
-    x = AVLTreeList()
-    x.root = AVLNode("8")
-    x.root.setLeft(z)
-    z.setRight(y)
-    y.setLeft(a)
-    y.setRight(b)
-    x.leftThenRightRotation(x.root)
-    if (x.root != y) or (x.root.left.right != a):
-        print('x.root is:', x.root.value)
-        print('x.root.left is:', x.root.left.value)
-        print('x.root.right is:', x.root.right.value)
-        print('x.root.left.right is:', x.root.left.right.value)
-        print('x.root.right.left is:', x.root.right.left.value)
-
-def testRIghtThenLeftRotation1():
-    y = AVLNode("7")
-    z = AVLNode("8")
-    x = AVLTreeList()
-    x.root = AVLNode("6")
-    x.root.setRight(z)
-    z.setLeft(y)
-    x.rightThenLeftRotation(x.root)
-    if x.root is not y and x.root.left is not z:
-        print('x.root is:', x.root.value)
-        print('x.root.left is:', x.root.left.value)
-        print('x.root.right is:', x.root.right.value)
-
-def testRIghtThenLeftRotation2():
-    y = AVLNode("7")
-    z = AVLNode("8")
-    a = AVLNode('a')
-    b = AVLNode('b')
-    x = AVLTreeList()
-    x.root = AVLNode("6")
-    x.root.setRight(z)
-    z.setLeft(y)
-    y.setLeft(a)
-    y.setRight(b)
-    x.rightThenLeftRotation(x.root)
-    if (x.root != y) or (x.root.left.right != a):
-        print('x.root is:', x.root.value)
-        print('x.root.left is:', x.root.left.value)
-        print('x.root.right is:', x.root.right.value)
-        print('x.root.left.right is:', x.root.left.right.value)
-        print('x.root.right.left is:', x.root.right.left.value)
-
-def testReterieve1():
-    y = AVLNode("6")
-    z = AVLNode("8")
-    a = AVLNode('a')
-    b = AVLNode('b')
-    x = AVLTreeList()
-    x.root = AVLNode("7")
-    x.root.setRight(z)
-    x.root.setLeft(y)
-    z.setLeft(b)
-    y.setRight(a)
-
-    for i in range(1,6):
-        print(x.retrieve(i))
-
-def testReterieve2():
-    y = AVLNode("6")
-    z = AVLNode("8")
-    a = AVLNode('a')
-    b = AVLNode('b')
-    x = AVLTreeList()
-    x.root = AVLNode("7")
-    x.root.setRight(y)
-    y.setRight(a)
-    a.setRight(b)
-    b.setRight(z)
-
-    for i in range(1,6):
-        print(x.retrieve(i))
-
-def testReterieve3():
-    y = AVLNode("6")
-    z = AVLNode("8")
-    a = AVLNode('a')
-    b = AVLNode('b')
-    x = AVLTreeList()
-    x.root = AVLNode("7")
-    x.root.setLeft(y)
-    y.setLeft(a)
-    a.setLeft(b)
-    b.setLeft(z)
-
-    for i in range(1,6):
-        print(x.retrieve(i))
-
-def testReterieve4():
-    y = AVLNode("6")
-    z = AVLNode("8")
-    a = AVLNode('a')
-    b = AVLNode('b')
-    x = AVLTreeList()
-    x.root = AVLNode("7")
-    x.root.setRight(y)
-    y.setLeft(a)
-    a.setLeft(b)
-    b.setLeft(z)
-
-    for i in range(1,6):
-        print(x.retrieve(i))
-
-def testListToArray1():
-    y = AVLNode("6")
-    z = AVLNode("8")
-    a = AVLNode('a')
-    b = AVLNode('b')
-    x = AVLTreeList()
-    x.root = AVLNode("7")
-    x.root.setLeft(y)
-    y.setLeft(a)
-    a.setLeft(b)
-    b.setLeft(z)
-    x.listToArray()
-
-def testListToArray2():
-    y = AVLNode("6")
-    z = AVLNode("8")
-    a = AVLNode('a')
-    b = AVLNode('b')
-    x = AVLTreeList()
-    x.root = AVLNode("7")
-    x.root.setRight(y)
-    y.setLeft(a)
-    a.setLeft(b)
-    b.setLeft(z)
-    x.listToArray()
-
-def testListToArray3():
-    y = AVLNode("6")
-    z = AVLNode("8")
-    a = AVLNode('a')
-    b = AVLNode('b')
-    x = AVLTreeList()
-    x.root = AVLNode("7")
-    x.root.setRight(z)
-    x.root.setLeft(y)
-    z.setLeft(b)
-    y.setRight(a)
-    x.listToArray()
-
-testNode1()
-testNode2()
-testNode3()
-testNode4()
-testRightRotation1()
-testRightRotation2()
-testLeftRotation1()
-testLeftRotation2()
-testLeftThenRIghtRotation1()
-testLeftThenRIghtRotation2()
-testRIghtThenLeftRotation1()
-testRIghtThenLeftRotation2()
-#testReterieve1()   #VVV
-#testReterieve2()   #VVV
-#testReterieve3()   #VVV
-#testReterieve4()  #VVV
-#testListToArray1() #VVV
-#testListToArray2()  #VVV
-#testListToArray3() #VVV
 
