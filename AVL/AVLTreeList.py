@@ -230,11 +230,11 @@ class AVLTreeList(object):
 
     """
 
-    def __init__(self): ###we need to update it in insertion\deletion
+    def __init__(self): # TODO: update the feilds in insertion\deletion\concat\split
         self.root = None
-        self.min = None #I Added this
-        self.max = None #I Added this
-        self.length = 0 #I Added this
+        self.min = None  # first Node on the list
+        self.max = None # Last node on the list
+        self.length = 0
 
     # add your fields here
 
@@ -258,7 +258,10 @@ class AVLTreeList(object):
     @returns: the the value of the i'th item in the list
     """
 
-    def retrieve(self, i): ###need to check if good
+    def retrieve(self, i):
+        if i > self.length or i < 0:
+            print('error, in i input')
+            return
         x = self.getRoot()
         xSize = x.getLeft().getSize() + 1
         while i > 0:
@@ -280,7 +283,6 @@ class AVLTreeList(object):
                     xSize = x.getLeft().getSize() + 1
                 continue
 
-
     """inserts val at position i in the list
 
     @type i: int
@@ -294,6 +296,36 @@ class AVLTreeList(object):
 
     def insert(self, i, val):
         return -1
+
+    """inserts val at the last index in the list
+        
+    @type val: str
+    @param val: the value we insert
+    @rtype: None
+    """
+
+    def insertLast(self, val): # this function is helping us implement insert 
+        current = self.getRoot()
+        while current.isReal:
+            current = current.getRight
+        current.setRight = AVLNode(val)
+        self.max = current.getRight
+        self.length += 1
+
+    """inserts val at the start the list
+
+    @type val: str
+    @param val: the value we insert
+    @rtype: None
+    """
+
+    def insertFirst(self, val): # this function is helping us implement insert 
+        current = self.getRoot()
+        while current.isReal:
+            current = current.getLeft
+        current.setLeft = AVLNode(val)
+        self.min = current.getLeft
+        self.length += 1
 
     """deletes the i'th item in the list
 
@@ -331,7 +363,7 @@ class AVLTreeList(object):
     @returns: a list of strings representing the data structure
     """
 
-    def listToArray(self): ###need to check if good
+    def listToArray(self): # TODO check if we need to returen a print or an array
         x = self.root
         if (not self.empty()):
             y = AVLTreeList()
@@ -351,8 +383,9 @@ class AVLTreeList(object):
     """
 
     def length(self):
-        x = getRoot(self)
-        return x.size
+        if self.empty():
+            self.length = 0
+        return self.length
 
     """splits the list at the i'th index
 
@@ -402,14 +435,14 @@ class AVLTreeList(object):
 
     """performs a left rotation
 
-        @type Node: AVLNode
-        @pre: node.getBalanceFactor = -2
-        @pre: node.right.getBalanceFactor = -1
-        @param node: The criminal Node that we need to right rotate
-        @rtype: Null
-        """
+    @type Node: AVLNode
+    @pre: node.getBalanceFactor = -2
+    @pre: node.right.getBalanceFactor = -1
+    @param node: The criminal Node that we need to right rotate
+    @rtype: Null
+    """
 
-    def leftRotation(self,node):
+    def leftRotation(self,node): # TODO update tree min\max if neccesry
         rNode = node.getRight()
         pNode = node.getParent()
         rlNode = rNode.getLeft()
@@ -430,14 +463,14 @@ class AVLTreeList(object):
 
     """performs a right rotation
 
-            @type Node: AVLNode
-            @pre: node.getBalanceFactor = 2
-            @pre: node.left.getBalanceFactor = 1
-            @param node: The criminal Node that we need to rotate
-            @rtype: Null
-            """
+    @type Node: AVLNode
+    @pre: node.getBalanceFactor = 2
+    @pre: node.left.getBalanceFactor = 1
+    @param node: The criminal Node that we need to rotate
+    @rtype: Null
+    """
 
-    def rightRotation(self, node):
+    def rightRotation(self, node): # TODO update tree min\max if neccesry
         pNode = node.getParent()
         lNode = node.getLeft()
         lrNode = lNode.getRight()
@@ -458,12 +491,12 @@ class AVLTreeList(object):
 
     """performs a left then a right rotation
 
-                @type Node: AVLNode
-                @pre: node.getBalanceFactor = 2
-                @pre: node.left.getBalanceFactor = -1
-                @param node: The criminal Node that we need to rotate
-                @rtype: Null
-                """
+    @type Node: AVLNode
+    @pre: node.getBalanceFactor = 2
+    @pre: node.left.getBalanceFactor = -1
+    @param node: The criminal Node that we need to rotate
+    @rtype: Null
+    """
 
     def leftThenRightRotation(self, node):
         lNode = node.getLeft()
@@ -494,12 +527,12 @@ class AVLTreeList(object):
 
     """performs a right then a left rotation
 
-               @type Node: AVLNode
-               @pre: node.getBalanceFactor = -2
-               @pre: node.left.getBalanceFactor = 1
-               @param node: The criminal Node that we need to rotate
-               @rtype: Null
-               """
+    @type Node: AVLNode
+    @pre: node.getBalanceFactor = -2
+    @pre: node.left.getBalanceFactor = 1
+    @param node: The criminal Node that we need to rotate
+    @rtype: Null
+    """
 
     def rightThenLeftRotation(self, node):
         rNode = node.getRight()
@@ -527,5 +560,4 @@ class AVLTreeList(object):
         if bNode is not None:
             bNode.setParent(rNode)
         return
-
 
