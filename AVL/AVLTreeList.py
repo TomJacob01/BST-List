@@ -258,26 +258,26 @@ class AVLTreeList(object):
     @returns: the the value of the i'th item in the list
     """
 
-    def retrieve(self, i):
+        def retrieve(self, i): # TODO check what to do if self is empty or i > self.length
         x = self.getRoot()
-        xSize = x.getLeft().getSize() + 1
-        while i > 0:
-            if (i == 0) or (xSize == i):
+        xSize = x.getLeft().getSize()
+        while i >= 0:
+            if xSize == i:
                 return x.value
             if xSize < i:
-                i = i - xSize
+                i = i - (xSize + 1)
                 x = x.getRight()
-                if x.getLeft() is None:
-                    xSize = 1
+                if x.isReal == False:
+                    xSize = 0
                 else:
-                    xSize = x.getLeft().getSize() + 1
+                    xSize = x.getLeft().getSize()
                 continue
             if xSize > i:
                 x = x.getLeft()
-                if x.getLeft() is None:
-                    xSize = 1
+                if x.getLeft().isReal == False:
+                    xSize = 0
                 else:
-                    xSize = x.getLeft().getSize() + 1
+                    xSize = x.getLeft().getSize()
                 continue
 
     """inserts val at position i in the list
