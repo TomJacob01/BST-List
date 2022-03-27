@@ -160,7 +160,7 @@ class AVLTreeTest(unittest.TestCase):
         z.setLeft(b)
         y.setRight(a)
 
-        for i in range(1,6):
+        for i in range(5):
             print(x.retrieve(i))
 
     def testReterieve2():
@@ -175,7 +175,7 @@ class AVLTreeTest(unittest.TestCase):
         a.setRight(b)
         b.setRight(z)
 
-        for i in range(1,6):
+        for i in range(5):
             print(x.retrieve(i))
 
     def testReterieve3():
@@ -190,7 +190,7 @@ class AVLTreeTest(unittest.TestCase):
         a.setLeft(b)
         b.setLeft(z)
 
-        for i in range(1,6):
+        for i in range(5):
             print(x.retrieve(i))
 
     def testReterieve4():
@@ -205,7 +205,7 @@ class AVLTreeTest(unittest.TestCase):
         a.setLeft(b)
         b.setLeft(z)
 
-        for i in range(1,6):
+        for i in range(5):
             print(x.retrieve(i))
 
     def testListToArray1():
