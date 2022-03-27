@@ -1,7 +1,7 @@
-26/03:
+27/03:
 
 functions: insert, delete
            Split, Concat, Search
 
-testers: length, first, last and all of the above
+testers: insertFirst, insertLast, successor, length, first, last and all of the above
 
