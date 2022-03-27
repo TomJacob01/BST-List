@@ -259,9 +259,6 @@ class AVLTreeList(object):
     """
 
     def retrieve(self, i):
-        if i > self.length or i < 0:
-            print('error, in i input')
-            return
         x = self.getRoot()
         xSize = x.getLeft().getSize() + 1
         while i > 0:
