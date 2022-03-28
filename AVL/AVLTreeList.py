@@ -11,10 +11,8 @@
 
 class AVLNode(object):
     """Constructor, you are allowed to add more fields.
-
     @type value: str
     @param value: data of your node
-
     @type isReal: bool
     @param isReal: whether the node is real or not
     """
@@ -46,7 +44,6 @@ class AVLNode(object):
         return self.left
 
     """returns the right child
-
     @rtype: AVLNode
     @returns: the right child of self, None if there is no right child
     """
@@ -55,7 +52,6 @@ class AVLNode(object):
         return self.right
 
     """returns the parent 
-
     @rtype: AVLNode
     @returns: the parent of self, None if there is no parent
     """
@@ -64,7 +60,6 @@ class AVLNode(object):
         return self.parent
 
     """return the value
-
     @rtype: str
     @returns: the value of self, None if the node is virtual
     """
@@ -73,7 +68,6 @@ class AVLNode(object):
         return self.value
 
     """returns the height
-
     @rtype: int
     @returns: the height of self, -1 if the node is virtual
     """
@@ -82,7 +76,7 @@ class AVLNode(object):
         return self.height
 
     """returns the size
-    
+
     @rtype: int
     @returns: the size, 1 if there is no children
     """
@@ -91,7 +85,7 @@ class AVLNode(object):
         return self.size
 
     """returns the balanceFactor of the Node
-    
+
     @rtype: int
     @returns: the balance factor of self, 0 if self is a virtual node
     """
@@ -100,9 +94,8 @@ class AVLNode(object):
         return self.balanceFactor
 
     """sets left child
-    
-    @note Run in O(log(n)) time
 
+    @note Run in O(1) time
     @type node: AVLNode
     @param node: a node
     """
@@ -111,18 +104,11 @@ class AVLNode(object):
         if self.isReal:
             self.left = node
             node.parent = self
-
-            current = self
-            while current != None:
-                current.setAll()
-                current = current.parent
-
-
+            #self.setAll()
 
     """sets right child
-    
-    @note Run in O(log(n)) time
 
+    @note Run in O(1) time
     @type node: AVLNode
     @param node: a node
     """
@@ -131,17 +117,11 @@ class AVLNode(object):
         if self.isReal:
             self.right = node
             node.parent = self
-
-            current = self
-            while current != None:
-                current.setAll()
-                current = current.parent
-
+            #self.setAll()
 
     """sets parent
-    
-    @note Run in O(log(n)) time
 
+    @note Run in O(1) time
     @type node: AVLNode
     @param node: a node
     """
@@ -151,13 +131,7 @@ class AVLNode(object):
             self.parent = node
             # TODO: update the node.right or node.left correspondingly
 
-            current = self.parent
-            while current != None:
-                current.setAll()
-                current = current.parent
-
     """sets value
-
     @type value: str
     @param value: data
     """
@@ -166,8 +140,7 @@ class AVLNode(object):
         if self.isReal:
             self.value = value
 
-    """sets the balance factor of the node
-
+    """sets the Height of the node
     @type h: int
     @param h: the height
     """
@@ -177,7 +150,6 @@ class AVLNode(object):
             self.height = h
 
     """returns whether self is not a virtual node 
-
     @rtype: bool
     @returns: False if self is a virtual node, True otherwise.
     """
@@ -186,7 +158,6 @@ class AVLNode(object):
         return self.isReal
 
     """sets Node size
-
     @note No parameters
     """
 
@@ -196,9 +167,7 @@ class AVLNode(object):
         else:
             self.size = 1 + self.left.size + self.right.size
 
-
     """sets the balance factor of the node
-
     @note No parameters
     """
 
@@ -208,7 +177,6 @@ class AVLNode(object):
         self.balanceFactor = self.left.height - self.right.height
 
     """sets the balance factor,height and size of the node
-
     @note No parameters
     """
 
@@ -218,11 +186,9 @@ class AVLNode(object):
             self.setHeight(max(self.right.height, self.left.height) + 1)
             self.setSize()
 
-
 """
 A class implementing the ADT list, using an AVL tree.
 """
-
 
 class AVLTreeList(object):
     """
@@ -258,12 +224,26 @@ class AVLTreeList(object):
     @returns: the the value of the i'th item in the list
     """
 
-        def retrieve(self, i): # TODO check what to do if self is empty or i > self.length
+    def retrieve(self, i): # TODO check what to do if self is empty or i > self.length
+        out = self.retrievHelper(i)
+        return out.getValue()
+
+    """retrieves the i'th item in the list
+
+        @type i: int
+        @pre: 0 <= i < self.length()
+        @param i: index in the list
+        @rtype: AVLNode
+        @returns: the the i'th item in the list
+        @description: we use this function for implementing retrieve and insert
+        """
+
+    def retrievHelper(self,i):
         x = self.getRoot()
         xSize = x.getLeft().getSize()
         while i >= 0:
             if xSize == i:
-                return x.value
+                return x
             if xSize < i:
                 i = i - (xSize + 1)
                 x = x.getRight()
@@ -292,37 +272,65 @@ class AVLTreeList(object):
     """
 
     def insert(self, i, val):
-        return -1
-
-    """inserts val at the last index in the list
-        
-    @type val: str
-    @param val: the value we insert
-    @rtype: None
-    """
-
-    def insertLast(self, val): # this function is helping us implement insert 
-        current = self.getRoot()
-        while current.isReal:
-            current = current.getRight
-        current.setRight = AVLNode(val)
-        self.max = current.getRight
+        node = AVLNode(val)
+        if self.root == None:
+            self.root = node
+            self.max = node
+            self.min = node
+            self.length = 1
+            return 0
+        if i == 0:
+            tmp = self.min
+            self.min.setLeft(node)
+            self.min = node
+        if i == self.length:
+            tmp = self.max
+            self.max.setRight(node)
+            self.max = node
+        elif 0 < i < self.length:
+            tmp = self.retrievHelper(i - 1)
+            tmp = tmp.getRight()
+            if tmp.isReal:
+                while tmp.left.isReal == True:
+                    tmp = tmp.getLeft()
+                tmp.setLeft(node)
+            else:
+                tmp = tmp.parent
+                tmp.setRight(node)
         self.length += 1
-
-    """inserts val at the start the list
-
-    @type val: str
-    @param val: the value we insert
-    @rtype: None
-    """
-
-    def insertFirst(self, val): # this function is helping us implement insert 
-        current = self.getRoot()
-        while current.isReal:
-            current = current.getLeft
-        current.setLeft = AVLNode(val)
-        self.min = current.getLeft
-        self.length += 1
+        while not (tmp == None):
+            tmp.setBalanceFactor()
+            BF = tmp.getBalanceFactor()
+            oldHeight = tmp.getHeight()
+            tmp.setAll()
+            newHeight = tmp.getHeight()
+            if -2 < BF < 2 and oldHeight == newHeight:
+                return  0
+            if -2 < BF < 2 and oldHeight != newHeight:
+                tmp = tmp.getParent()
+                continue
+            else:
+                if BF == 2:
+                    x = tmp.left.getBalanceFactor()
+                    if x == 1:
+                        self.rightRotation(tmp)
+                        return 1
+                    if x == -1:
+                        self.leftThenRightRotation(tmp)
+                        return 1
+                    print("BF == 2 AND x =", x)
+                    return
+                if BF == -2:
+                    x = tmp.right.getBalanceFactor()
+                    if x == 1:
+                        self.rightThenLeftRotation(tmp)
+                        return 1
+                    if x == -1:
+                        self.leftRotation(tmp)
+                        return 1
+                    print("BF == -2 AND x =", x)
+                    return
+        return 0
 
     """deletes the i'th item in the list
 
@@ -448,14 +456,11 @@ class AVLTreeList(object):
                 pNode.setLeft(rNode)
             else:
                 pNode.setRight(rNode)
-            rNode.setParent(pNode)
         elif pNode is None:
             rNode.setParent(None)
             self.root = rNode
-        node.setParent(rNode)
         rNode.setLeft(node)
         node.setRight(rlNode)
-        rlNode.setParent(node)
         return
 
     """performs a right rotation
@@ -476,14 +481,11 @@ class AVLTreeList(object):
                 pNode.setLeft(lNode)
             else:
                 pNode.setRight(lNode)
-            lNode.setParent(pNode)
         elif pNode is None:
             lNode.setParent(None)
             self.root = lNode
-        node.setParent(lNode)
         lNode.setRight(node)
         node.setLeft(lrNode)
-        lrNode.setParent(node)
         return
 
     """performs a left then a right rotation
@@ -506,20 +508,13 @@ class AVLTreeList(object):
                 pNode.setLeft(theNode)
             else:
                 pNode.setRight(theNode)
-            theNode.setParent(pNode)
         elif pNode is None:
-            theNode.setParent(None)
+            theNode.parent = None
             self.root = theNode
         theNode.setRight(node)
-        node.setParent(theNode)
         theNode.setLeft(lNode)
-        lNode.setParent(theNode)
         node.setLeft(bNode)
-        if bNode is not None:
-            bNode.setParent(node)
         lNode.setRight(aNode)
-        if aNode is not None:
-            aNode.setParent(lNode)
         return
 
     """performs a right then a left rotation
@@ -542,19 +537,11 @@ class AVLTreeList(object):
                 pNode.setLeft(theNode)
             else:
                 pNode.setRight(theNode)
-            theNode.setParent(pNode)
         elif pNode is None:
-            theNode.setParent(None)
+            theNode.parent = None
             self.root = theNode
         theNode.setLeft(node)
-        node.setParent(theNode)
         theNode.setRight(rNode)
-        rNode.setParent(theNode)
         node.setRight(aNode)
-        if aNode is not None:
-            aNode.setParent(node)
         rNode.setLeft(bNode)
-        if bNode is not None:
-            bNode.setParent(rNode)
         return
-
