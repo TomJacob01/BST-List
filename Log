@@ -1,6 +1,19 @@
 We will write here the changes we implemanted, the date it was done on.
 
 
+28/03: Tom
+-i changed AVLNode function: setLeft(), setRight(), setParent()
+ now the complexity is O(1) instead of O(logn)
+-i changed the AVLNode test
+
+27/03: Tom
+I made Successor (AVLNode), insertFirst, insertLast functions, but did not test yet
+
+
+26/03: Tom
+I made tests for the AVLnode class, and the four rotations, and everything works :)
+I made tests for the Reterieve() and ListToArray(), and everything works :)
+
 25/03: Tom
 I did the Construction of the AVLnodes, self.size & self.balanceFactor
 I added the size field to the nodes- so we can have a rank tree and implemnt listToArray() with it.
@@ -9,10 +22,3 @@ listToArray(), AVLTree empty(), AVLTree length(), AVLTree getRoot(), AVLTree ret
 I made the four Rotations, we need to check it
 I created a mini tester for some feilds of AVLNode- use it, we still need to work on the feilds.
 
-26/03: Tom
-I made tests for the AVLnode class, and the four rotations, and everything works :)
-I made tests for the Reterieve() and ListToArray(), and everything works :)
-
-
-27/03: Tom
-I made Successor (AVLNode), insertFirst, insertLast functions, but did not test yet
