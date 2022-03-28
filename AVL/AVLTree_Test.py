@@ -2,6 +2,44 @@ import unittest
 from AVLTreeList import AVLNode, AVLTreeList
 
 class AVLTreeTest(unittest.TestCase):
+    
+    
+    def testinsert1():
+    x = AVLTreeList()
+    AVLTreeList.insert(x,0,'a')
+    AVLTreeList.insert(x, 0, 'b')
+    AVLTreeList.insert(x, 0, 'c')
+    AVLTreeList.insert(x, 0, 'd')
+    AVLTreeList.insert(x, 0, 'e')
+
+    print('x.root is:', x.root.value)
+    print('x.root.left is:', x.root.left.value)
+
+def testinsert2():
+    x = AVLTreeList()
+    AVLTreeList.insert(x,0,'a')
+    AVLTreeList.insert(x, 1, 'b')
+    AVLTreeList.insert(x, 2, 'c')
+    AVLTreeList.insert(x, 3, 'd')
+    AVLTreeList.insert(x, 4, 'e')
+
+    print('x.root is:', x.root.value)
+    print('x.root.right is:', x.root.right.value)
+    x.listToArray()
+
+def testinsert3():
+    x = AVLTreeList()
+    AVLTreeList.insert(x,0,'a')
+    AVLTreeList.insert(x, 1, 'b')
+    AVLTreeList.insert(x, 1, 'c')
+    AVLTreeList.insert(x, 1, 'd')
+    AVLTreeList.insert(x, 4, 'e')
+
+    print('x.root is:', x.root.value)
+    print('x.root.right is:', x.root.right.value)
+    print('x.root.left is:', x.root.left.value)
+    print('x.root.left.right is:', x.root.left.right.value)
+    x.listToArray()
 
     def testRightRotation1(self):
         y = AVLNode("7")
