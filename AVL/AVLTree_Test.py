@@ -1,45 +1,45 @@
 import unittest
 from AVLTreeList import AVLNode, AVLTreeList
 
+
 class AVLTreeTest(unittest.TestCase):
     
-    
-    def testinsert1():
-    x = AVLTreeList()
-    AVLTreeList.insert(x,0,'a')
-    AVLTreeList.insert(x, 0, 'b')
-    AVLTreeList.insert(x, 0, 'c')
-    AVLTreeList.insert(x, 0, 'd')
-    AVLTreeList.insert(x, 0, 'e')
+    def testinsert1(self):
+        x = AVLTreeList()
+        AVLTreeList.insert(x, 0, 'a')
+        AVLTreeList.insert(x, 0, 'b')
+        AVLTreeList.insert(x, 0, 'c')
+        AVLTreeList.insert(x, 0, 'd')
+        AVLTreeList.insert(x, 0, 'e')
 
-    print('x.root is:', x.root.value)
-    print('x.root.left is:', x.root.left.value)
+        self.assertEqual("b", x.getRoot().getValue())
+        self.assertEqual("d", x.getRoot().getLeft().getValue())
 
-def testinsert2():
-    x = AVLTreeList()
-    AVLTreeList.insert(x,0,'a')
-    AVLTreeList.insert(x, 1, 'b')
-    AVLTreeList.insert(x, 2, 'c')
-    AVLTreeList.insert(x, 3, 'd')
-    AVLTreeList.insert(x, 4, 'e')
+    def testinsert2(self):
+        x = AVLTreeList()
+        AVLTreeList.insert(x, 0, 'a')
+        AVLTreeList.insert(x, 1, 'b')
+        AVLTreeList.insert(x, 2, 'c')
+        AVLTreeList.insert(x, 3, 'd')
+        AVLTreeList.insert(x, 4, 'e')
 
-    print('x.root is:', x.root.value)
-    print('x.root.right is:', x.root.right.value)
-    x.listToArray()
+        self.assertEqual("b", x.getRoot().getValue())
+        self.assertEqual("a", x.getRoot().getLeft().getValue())
+        self.assertListEqual(["a", "b", "c", "d", "e"], x.listToArray())
 
-def testinsert3():
-    x = AVLTreeList()
-    AVLTreeList.insert(x,0,'a')
-    AVLTreeList.insert(x, 1, 'b')
-    AVLTreeList.insert(x, 1, 'c')
-    AVLTreeList.insert(x, 1, 'd')
-    AVLTreeList.insert(x, 4, 'e')
+    def testinsert3(self):
+        x = AVLTreeList()
+        AVLTreeList.insert(x, 0, 'a')
+        AVLTreeList.insert(x, 1, 'b')
+        AVLTreeList.insert(x, 1, 'c')
+        AVLTreeList.insert(x, 1, 'd')
+        AVLTreeList.insert(x, 4, 'e')
 
-    print('x.root is:', x.root.value)
-    print('x.root.right is:', x.root.right.value)
-    print('x.root.left is:', x.root.left.value)
-    print('x.root.left.right is:', x.root.left.right.value)
-    x.listToArray()
+        self.assertEqual("d", x.getRoot().getValue())
+        self.assertEqual("c", x.getRoot().getRight().getValue())
+        self.assertEqual("b", x.getRoot().getLeft().getValue())
+        self.assertEqual("a", x.getRoot().getRight().getValue())
+        self.assertListEqual(["a", "b", "c", "d", "e"], x.listToArray())
 
     def testRightRotation1(self):
         y = AVLNode("7")
@@ -76,7 +76,6 @@ def testinsert3():
             print('x.root.right.right is:', x.root.right.right.value)
             print('x.root.right.left is:', x.root.right.left.value)
             self.fail()
-
 
     def testLeftRotation1(self):
         y = AVLNode("7")
@@ -186,124 +185,92 @@ def testinsert3():
             print('x.root.right.left is:', x.root.right.left.value)
             self.fail()
 
-    def testReterieve1():
-        y = AVLNode("6")
-        z = AVLNode("8")
-        a = AVLNode('a')
-        b = AVLNode('b')
+    def testReterieve1(self):
         x = AVLTreeList()
-        x.root = AVLNode("7")
-        x.root.setRight(z)
-        x.root.setLeft(y)
-        z.setLeft(b)
-        y.setRight(a)
+        x.insert(0, "6")
+        x.insert(1, "a")
+        x.insert(2, "7")
+        x.insert(3, "b")
+        x.insert(4, "8")
 
-        for i in range(5):
-            print(x.retrieve(i))
+        self.assertEqual("6", x.retrieve(0))
+        self.assertEqual("a", x.retrieve(1))
+        self.assertEqual("7", x.retrieve(2))
+        self.assertEqual("b", x.retrieve(3))
+        self.assertEqual("8", x.retrieve(4))
 
-    def testReterieve2():
-        y = AVLNode("6")
-        z = AVLNode("8")
-        a = AVLNode('a')
-        b = AVLNode('b')
+    def testReterieve2(self):
         x = AVLTreeList()
-        x.root = AVLNode("7")
-        x.root.setRight(y)
-        y.setRight(a)
-        a.setRight(b)
-        b.setRight(z)
+        x.insert(0, "7")
+        x.insert(1, "6")
+        x.insert(2, "a")
+        x.insert(3, "b")
+        x.insert(4, "8")
 
-        for i in range(5):
-            print(x.retrieve(i))
+        self.assertEqual("7", x.retrieve(0))
+        self.assertEqual("6", x.retrieve(1))
+        self.assertEqual("a", x.retrieve(2))
+        self.assertEqual("b", x.retrieve(3))
+        self.assertEqual("8", x.retrieve(4))
 
-    def testReterieve3():
-        y = AVLNode("6")
-        z = AVLNode("8")
-        a = AVLNode('a')
-        b = AVLNode('b')
+    def testReterieve3(self):
         x = AVLTreeList()
-        x.root = AVLNode("7")
-        x.root.setLeft(y)
-        y.setLeft(a)
-        a.setLeft(b)
-        b.setLeft(z)
+        x.insert(0, "8")
+        x.insert(1, "b")
+        x.insert(2, "a")
+        x.insert(3, "6")
+        x.insert(4, "7")
 
-        for i in range(5):
-            print(x.retrieve(i))
+        self.assertEqual("8", x.retrieve(0))
+        self.assertEqual("b", x.retrieve(1))
+        self.assertEqual("a", x.retrieve(2))
+        self.assertEqual("6", x.retrieve(3))
+        self.assertEqual("7", x.retrieve(4))
 
-    def testReterieve4():
-        y = AVLNode("6")
-        z = AVLNode("8")
-        a = AVLNode('a')
-        b = AVLNode('b')
+    def testReterieve4(self):
         x = AVLTreeList()
-        x.root = AVLNode("7")
-        x.root.setRight(y)
-        y.setLeft(a)
-        a.setLeft(b)
-        b.setLeft(z)
+        x.insert(0, "7")
+        x.insert(1, "8")
+        x.insert(2, "b")
+        x.insert(3, "a")
+        x.insert(4, "6")
 
-        for i in range(5):
-            print(x.retrieve(i))
+        self.assertEqual("7", x.retrieve(0))
+        self.assertEqual("8", x.retrieve(1))
+        self.assertEqual("b", x.retrieve(2))
+        self.assertEqual("a", x.retrieve(3))
+        self.assertEqual("6", x.retrieve(4))
 
-    def testListToArray1():
-        y = AVLNode("6")
-        z = AVLNode("8")
-        a = AVLNode('a')
-        b = AVLNode('b')
+    def testListToArray1(self):
         x = AVLTreeList()
-        x.root = AVLNode("7")
-        x.root.setLeft(y)
-        y.setLeft(a)
-        a.setLeft(b)
-        b.setLeft(z)
-        x.listToArray()
+        x.insert(0, "8")
+        x.insert(1, "b")
+        x.insert(2, "a")
+        x.insert(3, "6")
+        x.insert(4, "7")
 
-    def testListToArray2():
-        y = AVLNode("6")
-        z = AVLNode("8")
-        a = AVLNode('a')
-        b = AVLNode('b')
+        self.assertListEqual(["8", "b", "a", "6", "7"], x.listToArray())
+
+    def testListToArray2(self):
         x = AVLTreeList()
-        x.root = AVLNode("7")
-        x.root.setRight(y)
-        y.setLeft(a)
-        a.setLeft(b)
-        b.setLeft(z)
-        x.listToArray()
+        x.insert(0, "7")
+        x.insert(1, "8")
+        x.insert(2, "b")
+        x.insert(3, "a")
+        x.insert(4, "6")
 
-    def testListToArray3():
-        y = AVLNode("6")
-        z = AVLNode("8")
-        a = AVLNode('a')
-        b = AVLNode('b')
+        self.assertListEqual(["7", "8", "b", "a", "6"], x.listToArray())
+
+    def testListToArray3(self):
         x = AVLTreeList()
-        x.root = AVLNode("7")
-        x.root.setRight(z)
-        x.root.setLeft(y)
-        z.setLeft(b)
-        y.setRight(a)
-        x.listToArray()
+        x.insert(0, "6")
+        x.insert(1, "a")
+        x.insert(2, "7")
+        x.insert(3, "b")
+        x.insert(4, "8")
 
-testNode1()
-testNode2()
-testNode3()
-testNode4()
-testRightRotation1()
-testRightRotation2()
-testLeftRotation1()
-testLeftRotation2()
-testLeftThenRIghtRotation1()
-testLeftThenRIghtRotation2()
-testRIghtThenLeftRotation1()
-testRIghtThenLeftRotation2()
-#testReterieve1()   #VVV
-#testReterieve2()   #VVV
-#testReterieve3()   #VVV
-#testReterieve4()  #VVV
-#testListToArray1() #VVV
-#testListToArray2()  #VVV
-#testListToArray3() #VVV
+        self.assertListEqual(["6", "a", "7", "b", "8"], x.listToArray())
+
 
 if __name__ == '__main__':
     unittest.main()
