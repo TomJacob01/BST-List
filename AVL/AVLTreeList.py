@@ -104,7 +104,6 @@ class AVLNode(object):
         if self.isReal:
             self.left = node
             node.parent = self
-            #self.setAll()
 
     """sets right child
 
@@ -117,7 +116,6 @@ class AVLNode(object):
         if self.isReal:
             self.right = node
             node.parent = self
-            #self.setAll()
 
     """sets parent
 
@@ -129,7 +127,6 @@ class AVLNode(object):
     def setParent(self, node):
         if self.isReal:
             self.parent = node
-            # TODO: update the node.right or node.left correspondingly
 
     """sets value
     @type value: str
@@ -225,7 +222,7 @@ class AVLTreeList(object):
     """
 
     def retrieve(self, i): # TODO check what to do if self is empty or i > self.length
-        out = self.retrievHelper(i)
+        out = self.retrieveHelper(i)
         return out.getValue()
 
     """retrieves the i'th item in the list
@@ -238,12 +235,16 @@ class AVLTreeList(object):
         @description: we use this function for implementing retrieve and insert
         """
 
-    def retrievHelper(self,i):
+    def retrieveHelper(self, i):
+        if self.length() < i:
+            return None
         x = self.getRoot()
         xSize = x.getLeft().getSize()
+
         while i >= 0:
             if xSize == i:
                 return x
+
             if xSize < i:
                 i = i - (xSize + 1)
                 x = x.getRight()
@@ -252,6 +253,7 @@ class AVLTreeList(object):
                 else:
                     xSize = x.getLeft().getSize()
                 continue
+
             if xSize > i:
                 x = x.getLeft()
                 if x.getLeft().isReal == False:
@@ -288,7 +290,7 @@ class AVLTreeList(object):
             self.max.setRight(node)
             self.max = node
         elif 0 < i < self.length:
-            tmp = self.retrievHelper(i - 1)
+            tmp = self.retrieveHelper(i - 1)
             tmp = tmp.getRight()
             if tmp.isReal:
                 while tmp.left.isReal == True:

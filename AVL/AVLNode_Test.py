@@ -50,10 +50,14 @@ class AVLNodeTest(unittest.TestCase):
         c.setLeft(y)
         a.setRight(z)
         a.setLeft(w)
-        current = w
-        while current != None:
-            current.setAll()
-            current = current.parent
+
+        w.setAll()
+        z.setAll()
+        y.setAll()
+        d.setAll()
+        a.setAll()
+        c.setAll()
+        x.setAll()
 
         self.assertEqual(x.getHeight(), 2, "x Height is : " + str(x.getHeight()) + ' it should be 2')
         self.assertEqual(x.getSize(), 7, "x size is: " + str(x.getSize()) + ' it should be 7')
@@ -78,10 +82,14 @@ class AVLNodeTest(unittest.TestCase):
         c.setLeft(y)
         a.setRight(z)
         z.setLeft(w)
-        current = w
-        while current != None:
-            current.setAll()
-            current = current.parent
+
+        w.setAll()
+        z.setAll()
+        y.setAll()
+        d.setAll()
+        a.setAll()
+        c.setAll()
+        x.setAll()
 
         self.assertEqual(x.getHeight(), 3, "x Height is : " + str(x.getHeight()) + ' it should be 3')
         self.assertEqual(x.getSize(), 7, "x size is: " + str(x.getSize()) + ' it should be 7')
@@ -107,10 +115,15 @@ class AVLNodeTest(unittest.TestCase):
         a.setRight(z)
         z.setLeft(w)
         w.setRight(e)
-        current = w
-        while current != None:
-            current.setAll()
-            current = current.parent
+
+        e.setAll()
+        w.setAll()
+        z.setAll()
+        y.setAll()
+        d.setAll()
+        a.setAll()
+        c.setAll()
+        x.setAll()
 
         self.assertEqual(x.getHeight(), 4, "x Height is : " + str(x.getHeight()) + ' it should be 4')
         self.assertEqual(x.getSize(), 8, "x size is: " + str(x.getSize()) + ' it should be 8')
