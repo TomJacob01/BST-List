@@ -387,16 +387,21 @@ class AVLTreeList(object):
 
         def insertTreeToArray(node, array):
 
+            # stop condition
             if node.getLeft().isRealNode() == False and node.getRight().isRealNode() == False:
                 array.append(node.value)
                 return
 
-            insertTreeToArray(node.getLeft(), array)
+            if node.getLeft().isRealNode():
+                insertTreeToArray(node.getLeft(), array)
+
             array.append(node.getValue())
-            insertTreeToArray(node.getRight(), array)
 
+            if node.getRight().isRealNode():
+                insertTreeToArray(node.getRight(), array)
 
-        if self.empty(): # the case when the tree is empty
+        # the case when the tree is empty
+        if self.empty():
             return []
 
         array_of_values = []
@@ -405,7 +410,6 @@ class AVLTreeList(object):
         insertTreeToArray(self.root, array_of_values)
 
         return array_of_values
-
 
     """returns the size of the list 
 
@@ -441,7 +445,8 @@ class AVLTreeList(object):
         return None
 
     """searches for a *value* in the list
-
+    
+    @note Run in O(n) time
     @type val: str
     @param val: a value to be searched
     @rtype: int
@@ -449,7 +454,51 @@ class AVLTreeList(object):
     """
 
     def search(self, val):
-        return None
+
+        """
+
+        helping function that goes through a tree in order, counts the amount of nodes we have
+        already checked, starting from 0
+        @returns: the corresponding index or -1 if not found
+
+        """
+
+        def searchingAValue(node, value, index):
+
+            #stop condition
+            if node.getLeft().isRealNode() == False and node.getRight().isRealNode() == False:
+                if node.getValue() == value:
+                    return index[0]
+
+                index[0] += 1
+                return -1
+
+            # if node has a left child
+            if node.getLeft().isRealNode():
+                result = searchingAValue(node.getLeft(), value, index)
+                if result != -1:
+                    return result
+
+            # checking if current node is the one we need
+            if node.getValue() == value:
+                return index[0]
+            index[0] += 1
+
+            # if node has a right child
+            if node.getRight().isRealNode():
+                result = searchingAValue(node.getRight(), value, index)
+                if result != -1:
+                    return result
+
+            # if the needed value has not found
+            return -1
+
+        if self.empty():
+            return -1
+
+        index = [0]
+        return searchingAValue(self.root, val, index)
+
 
     """returns the root of the tree representing the list
 
