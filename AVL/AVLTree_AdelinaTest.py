@@ -16,8 +16,6 @@ class AVLTreeListTest(unittest.TestCase):
         self.assertTrue(lst.empty())
 
     def test_length(self):
-        # TODO: fix
-        self.skipTest()
 
         lst = AVLTreeList()
         self.assertEquals(lst.length(), 0)
@@ -107,9 +105,6 @@ class AVLTreeListTest(unittest.TestCase):
             self.assertEqual(str(i), lst.last())
 
     def test_list_root(self):
-        # TODO: Fix test
-        self.skipTest()
-
         lst = AVLTreeList()
         self.assertIsNone(lst.getRoot())
 

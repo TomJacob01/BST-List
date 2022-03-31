@@ -395,7 +395,6 @@ class AVLTreeList(object):
             self.min = successor
 
         elif node == self.max:
-            self.display()
             predecessor = self.treeSelectRec(self.root, i)
             self.max = predecessor
 
@@ -415,7 +414,9 @@ class AVLTreeList(object):
         # the node has only right child
         if node.getLeft().isRealNode() == False:
 
-            if parent.getLeft() == node:
+            if parent is None:
+                self.root = node.getRight()
+            elif parent.getLeft() == node:
                 parent.setLeft(node.getRight())
             else:
                 parent.setRight(node.getRight())
@@ -425,7 +426,9 @@ class AVLTreeList(object):
         # the node has only left child
         if node.getRight().isRealNode() == False:
 
-            if parent.getLeft() == node:
+            if parent is None:
+                self.root = node.getLeft()
+            elif parent.getLeft() == node:
                 parent.setLeft(node.getLeft())
             else:
                 parent.setRight(node.getLeft())
@@ -436,7 +439,9 @@ class AVLTreeList(object):
         successor = self.treeSelectRec(self.root, i + 2)
         new_parent = self.deleteBST(successor)
 
-        if parent.getLeft() == node:
+        if parent is None:
+            self.root = successor
+        elif parent.getLeft() == node:
             parent.setLeft(successor)
         else:
             parent.setRight(successor)
@@ -462,9 +467,7 @@ class AVLTreeList(object):
             self.size = 0
             return 0
 
-        self.display()
         parent = self.deleteBST(i)
-        self.display()
         self.size -= 1
 
         # Update tree, and perform rotations
@@ -492,7 +495,7 @@ class AVLTreeList(object):
                 if BF == 2:
                     leftBF = parent.left.getBalanceFactor()
 
-                    if leftBF == 1:
+                    if leftBF == 1 or leftBF == 0:
                         self.rightRotation(parent)
                         self.updateAllNodes(parent)
                         changes_counter += 1
@@ -515,7 +518,7 @@ class AVLTreeList(object):
                         parent = parent.getParent()
                         continue
 
-                    elif rightBF == -1:
+                    elif rightBF == -1 or rightBF == 0:
                         self.leftRotation(parent)
                         self.updateAllNodes(parent)
                         changes_counter += 2
