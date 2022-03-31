@@ -20,7 +20,7 @@ class AVLTreeListTest(unittest.TestCase):
         self.assertEquals(lst.length(), 0)
 
         for i in range(20):
-            lst.insert(i, "a")
+            lst.insert(i, str(i))
             self.assertEquals(i + 1, lst.length(), "length() failed for i = {}".format(i))
 
         for i in reversed(range(20)):
@@ -111,7 +111,7 @@ class AVLTreeListTest(unittest.TestCase):
             lst.insert(i, str(i))
         self.assertIsNotNone(lst.getRoot())
 
-        for i in range(50):
+        for i in reversed(range(50)):
             lst.delete(i)
         self.assertIsNone(lst.getRoot())
 

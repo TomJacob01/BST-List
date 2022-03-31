@@ -341,7 +341,7 @@ class AVLTreeList(object):
 
             if -2 < BF < 2 and oldHeight == newHeight:
                 self.updateAllNodes(parent)
-                return 0
+                return changes_counter
 
             if -2 < BF < 2 and oldHeight != newHeight:
                 parent = parent.getParent()
@@ -377,6 +377,73 @@ class AVLTreeList(object):
 
         return changes_counter
 
+
+    """deletes the i'th item in the BST
+
+    @type i: int
+    @pre: 0 <= i < self.length()
+    @param i: The intended index in the BST to be deleted
+    @rtype: AVLNode
+    @returns: the parent of the physically deleted node
+    """
+    def deleteBST(self, i):
+
+        node = self.treeSelectRec(self.root, i + 1)
+
+        if node == self.min:
+            successor = self.treeSelectRec(self.root, i + 2)
+            self.min = successor
+
+        elif node == self.max:
+            self.display()
+            predecessor = self.treeSelectRec(self.root, i)
+            self.max = predecessor
+
+        parent = node.getParent()
+
+        # the node is a leaf in the BST
+        if node.getLeft().isRealNode() == False and node.getRight().isRealNode() == False:
+            virtual_node = AVLNode(None, False)
+
+            if parent.getLeft() == node:
+                parent.setLeft(virtual_node)
+            else:
+                parent.setRight(virtual_node)
+
+            return parent
+
+        # the node has only right child
+        if node.getLeft().isRealNode() == False:
+
+            if parent.getLeft() == node:
+                parent.setLeft(node.getRight())
+            else:
+                parent.setRight(node.getRight())
+
+            return parent
+
+        # the node has only left child
+        if node.getRight().isRealNode() == False:
+
+            if parent.getLeft() == node:
+                parent.setLeft(node.getLeft())
+            else:
+                parent.setRight(node.getLeft())
+
+            return parent
+
+        # the node has right and left child
+        successor = self.treeSelectRec(self.root, i + 2)
+        new_parent = self.deleteBST(successor)
+
+        if parent.getLeft() == node:
+            parent.setLeft(successor)
+        else:
+            parent.setRight(successor)
+
+        return new_parent
+
+
     """deletes the i'th item in the list
 
     @type i: int
@@ -385,9 +452,78 @@ class AVLTreeList(object):
     @rtype: int
     @returns: the number of rebalancing operation due to AVL rebalancing
     """
-
     def delete(self, i):
-        return -1
+
+        # the tree has only one node
+        if self.size == 1:
+            self.root = None
+            self.min = None
+            self.max = None
+            self.size = 0
+            return 0
+
+        self.display()
+        parent = self.deleteBST(i)
+        self.display()
+        self.size -= 1
+
+        # Update tree, and perform rotations
+        changes_counter = 0
+        while parent != None:
+
+            # Update size, height, BF
+            parent.setBalanceFactor()
+            BF = parent.getBalanceFactor()
+            oldHeight = parent.getHeight()
+            parent.setAll()
+            newHeight = parent.getHeight()
+
+            if -2 < BF < 2 and oldHeight == newHeight:
+                self.updateAllNodes(parent)
+                return changes_counter
+
+            if -2 < BF < 2 and oldHeight != newHeight:
+                parent = parent.getParent()
+                changes_counter += 1
+                continue
+
+            # abs(BF) == 2 -> Need to fix Balance Factor
+            else:
+                if BF == 2:
+                    leftBF = parent.left.getBalanceFactor()
+
+                    if leftBF == 1:
+                        self.rightRotation(parent)
+                        self.updateAllNodes(parent)
+                        changes_counter += 1
+                        parent = parent.getParent()
+                        continue
+
+                    elif leftBF == -1:
+                        self.leftThenRightRotation(parent)
+                        self.updateAllNodes(parent)
+                        changes_counter += 2
+                        parent = parent.getParent()
+                        continue
+
+                if BF == -2:
+                    rightBF = parent.right.getBalanceFactor()
+                    if rightBF == 1:
+                        self.rightThenLeftRotation(parent)
+                        self.updateAllNodes(parent)
+                        changes_counter += 2
+                        parent = parent.getParent()
+                        continue
+
+                    elif rightBF == -1:
+                        self.leftRotation(parent)
+                        self.updateAllNodes(parent)
+                        changes_counter += 2
+                        parent = parent.getParent()
+                        continue
+
+        return changes_counter
+
 
     """returns the value of the first item in the list
 
