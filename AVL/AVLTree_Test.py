@@ -193,6 +193,8 @@ class AVLTreeTest(unittest.TestCase):
         x.insert(3, "b")
         x.insert(4, "8")
 
+        x.display()
+
         self.assertEqual("6", x.retrieve(0))
         self.assertEqual("a", x.retrieve(1))
         self.assertEqual("7", x.retrieve(2))
