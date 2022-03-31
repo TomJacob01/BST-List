@@ -183,9 +183,11 @@ class AVLNode(object):
             self.setHeight(max(self.right.height, self.left.height) + 1)
             self.setSize()
 
+
 """
 A class implementing the ADT list, using an AVL tree.
 """
+
 
 class AVLTreeList(object):
     """
@@ -193,10 +195,10 @@ class AVLTreeList(object):
 
     """
 
-    def __init__(self): # TODO: update the feilds in insertion\deletion\concat\split
+    def __init__(self):  # TODO: update the feilds in insertion\deletion\concat\split
         self.root = None
         self.min = None  # first Node on the list
-        self.max = None # Last node on the list
+        self.max = None  # Last node on the list
         self.length = 0
 
     # add your fields here
@@ -207,8 +209,8 @@ class AVLTreeList(object):
     @returns: True if the list is empty, False otherwise
     """
 
-    def empty(self):  ###need to check if good
-        if self.root is None:
+    def empty(self):
+        if self.length == 0:
             return True
         return False
 
@@ -221,7 +223,7 @@ class AVLTreeList(object):
     @returns: the the value of the i'th item in the list
     """
 
-    def retrieve(self, i): # TODO check what to do if self is empty or i > self.length
+    def retrieve(self, i):
         out = self.retrieveHelper(i)
         return out.getValue()
 
@@ -307,7 +309,7 @@ class AVLTreeList(object):
             tmp.setAll()
             newHeight = tmp.getHeight()
             if -2 < BF < 2 and oldHeight == newHeight:
-                return  0
+                return 0
             if -2 < BF < 2 and oldHeight != newHeight:
                 tmp = tmp.getParent()
                 continue
@@ -353,6 +355,8 @@ class AVLTreeList(object):
     """
 
     def first(self):
+        if self.empty():
+            return None
         return self.min.getValue()
 
     """returns the value of the last item in the list
@@ -362,26 +366,46 @@ class AVLTreeList(object):
     """
 
     def last(self):
+        if self.empty():
+            return None
         return self.max.getValue()
 
     """returns an array representing list 
-
+    
+    @note Run in O(n) time
     @rtype: list
     @returns: a list of strings representing the data structure
     """
 
-    def listToArray(self): # TODO check if we need to returen a print or an array
-        x = self.root
-        if (not self.empty()):
-            y = AVLTreeList()
-            y.root = x.getLeft()
-            y.listToArray()
-            if self.root.isRealNode():
-                print(x.value)
-            y = AVLTreeList()
-            y.root = x.getRight()
-            y.listToArray()
-        return
+    # TODO: Fix. Function should return a list not print it
+    def listToArray(self):
+
+        """
+        helping function that goes through a tree in order and inserts its value to an array
+        @returns: None
+        """
+
+        def insertTreeToArray(node, array):
+
+            if node.getLeft().isRealNode() == False and node.getRight().isRealNode() == False:
+                array.append(node.value)
+                return
+
+            insertTreeToArray(node.getLeft(), array)
+            array.append(node.getValue())
+            insertTreeToArray(node.getRight(), array)
+
+
+        if self.empty(): # the case when the tree is empty
+            return []
+
+        array_of_values = []
+
+        # the case when the tree is not empty
+        insertTreeToArray(self.root, array_of_values)
+
+        return array_of_values
+
 
     """returns the size of the list 
 
@@ -390,8 +414,6 @@ class AVLTreeList(object):
     """
 
     def length(self):
-        if self.empty():
-            self.length = 0
         return self.length
 
     """splits the list at the i'th index
@@ -437,7 +459,7 @@ class AVLTreeList(object):
 
     def getRoot(self):
         if self.empty():
-            return  None
+            return None
         return self.root
 
     """performs a left rotation
@@ -449,11 +471,11 @@ class AVLTreeList(object):
     @rtype: Null
     """
 
-    def leftRotation(self,node): # TODO update tree min\max if neccesry
+    def leftRotation(self, node):  # TODO update tree min\max if neccesry
         rNode = node.getRight()
         pNode = node.getParent()
         rlNode = rNode.getLeft()
-        if pNode is not  None:
+        if pNode is not None:
             if pNode.left is node:
                 pNode.setLeft(rNode)
             else:
@@ -474,7 +496,7 @@ class AVLTreeList(object):
     @rtype: Null
     """
 
-    def rightRotation(self, node): # TODO update tree min\max if neccesry
+    def rightRotation(self, node):  # TODO update tree min\max if neccesry
         pNode = node.getParent()
         lNode = node.getLeft()
         lrNode = lNode.getRight()
@@ -504,7 +526,7 @@ class AVLTreeList(object):
         pNode = node.getParent()
         theNode = lNode.getRight()
         aNode = theNode.getLeft()
-        bNode= theNode.getRight()
+        bNode = theNode.getRight()
         if pNode is not None:
             if pNode.left is node:
                 pNode.setLeft(theNode)
