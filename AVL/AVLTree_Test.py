@@ -35,11 +35,7 @@ class AVLTreeTest(unittest.TestCase):
         AVLTreeList.insert(x, 1, 'd')
         AVLTreeList.insert(x, 4, 'e')
 
-        self.assertEqual("d", x.getRoot().getValue())
-        self.assertEqual("c", x.getRoot().getRight().getValue())
-        self.assertEqual("b", x.getRoot().getLeft().getValue())
-        self.assertEqual("a", x.getRoot().getRight().getValue())
-        self.assertListEqual(["a", "b", "c", "d", "e"], x.listToArray())
+        self.assertListEqual(["a", "d", "c", "b", "e"], x.listToArray())
 
     def testRightRotation1(self):
         y = AVLNode("7")

@@ -199,7 +199,7 @@ class AVLTreeList(object):
         self.root = None
         self.min = None  # first Node on the list
         self.max = None  # Last node on the list
-        self.length = 0
+        self.size = 0
 
     # add your fields here
 
@@ -210,7 +210,7 @@ class AVLTreeList(object):
     """
 
     def empty(self):
-        if self.length == 0:
+        if self.size == 0:
             return True
         return False
 
@@ -224,8 +224,17 @@ class AVLTreeList(object):
     """
 
     def retrieve(self, i):
-        out = self.retrieveHelper(i)
+        out = self.treeSelectRec(self.root, i + 1)
         return out.getValue()
+
+    def treeSelectRec(self, node, k):
+        rank = node.getLeft().getSize() + 1
+        if k == rank:
+            return node
+        elif k < rank:
+            return self.treeSelectRec(node.getLeft(), k)
+        else:
+            return self.treeSelectRec(node.getRight(), k - rank)
 
     """retrieves the i'th item in the list
 
@@ -263,6 +272,12 @@ class AVLTreeList(object):
                     xSize = x.getLeft().getSize()
                 continue
 
+    def updateAllNodes(self, node):
+
+        while node.getParent() != None:
+            node.setAll()
+            node = node.getParent()
+
     """inserts val at position i in the list
 
     @type i: int
@@ -275,65 +290,92 @@ class AVLTreeList(object):
     """
 
     def insert(self, i, val):
+
         node = AVLNode(val)
-        if self.root == None:
+
+        # Case of empty tree
+        if self.empty():
             self.root = node
             self.max = node
             self.min = node
-            self.length = 1
+            self.size = 1
             return 0
+
+        # Insert new node in the beginning
         if i == 0:
-            tmp = self.min
+            parent = self.min
             self.min.setLeft(node)
             self.min = node
-        if i == self.length:
-            tmp = self.max
+
+        # Insert new node in the end
+        elif i == self.length():
+            parent = self.max
             self.max.setRight(node)
             self.max = node
-        elif 0 < i < self.length:
-            tmp = self.retrieveHelper(i - 1)
-            tmp = tmp.getRight()
-            if tmp.isReal:
-                while tmp.left.isReal == True:
-                    tmp = tmp.getLeft()
-                tmp.setLeft(node)
+
+        # Insert new node in the middle
+        elif 0 < i < self.length():
+            parent = self.treeSelectRec(self.root, i)
+            parent = parent.getRight()
+            if parent.isRealNode():
+                while parent.getLeft().isRealNode() == True:
+                    parent = parent.getLeft()
+                parent.setLeft(node)
             else:
-                tmp = tmp.parent
-                tmp.setRight(node)
-        self.length += 1
-        while not (tmp == None):
-            tmp.setBalanceFactor()
-            BF = tmp.getBalanceFactor()
-            oldHeight = tmp.getHeight()
-            tmp.setAll()
-            newHeight = tmp.getHeight()
+                parent = parent.getParent()
+                parent.setRight(node)
+
+        # Update length
+        self.size += 1
+
+        # Update tree, and perform rotations
+        changes_counter = 0
+        while parent != None:
+
+            # Update size, height, BF
+            parent.setBalanceFactor()
+            BF = parent.getBalanceFactor()
+            oldHeight = parent.getHeight()
+            parent.setAll()
+            newHeight = parent.getHeight()
+
             if -2 < BF < 2 and oldHeight == newHeight:
+                self.updateAllNodes(parent)
                 return 0
+
             if -2 < BF < 2 and oldHeight != newHeight:
-                tmp = tmp.getParent()
+                parent = parent.getParent()
+                changes_counter += 1
                 continue
+
+            # abs(BF) == 2 -> Need to fix Balance Factor
             else:
                 if BF == 2:
-                    x = tmp.left.getBalanceFactor()
-                    if x == 1:
-                        self.rightRotation(tmp)
-                        return 1
-                    if x == -1:
-                        self.leftThenRightRotation(tmp)
-                        return 1
-                    print("BF == 2 AND x =", x)
-                    return
+                    leftBF = parent.left.getBalanceFactor()
+
+                    if leftBF == 1:
+                        self.rightRotation(parent)
+                        self.updateAllNodes(parent)
+                        return 1 + changes_counter
+
+                    elif leftBF == -1:
+                        self.leftThenRightRotation(parent)
+                        self.updateAllNodes(parent)
+                        return 2 + changes_counter
+
                 if BF == -2:
-                    x = tmp.right.getBalanceFactor()
-                    if x == 1:
-                        self.rightThenLeftRotation(tmp)
-                        return 1
-                    if x == -1:
-                        self.leftRotation(tmp)
-                        return 1
-                    print("BF == -2 AND x =", x)
-                    return
-        return 0
+                    rightBF = parent.right.getBalanceFactor()
+                    if rightBF == 1:
+                        self.rightThenLeftRotation(parent)
+                        self.updateAllNodes(parent)
+                        return 2 + changes_counter
+
+                    elif rightBF == -1:
+                        self.leftRotation(parent)
+                        self.updateAllNodes(parent)
+                        return 1 + changes_counter
+
+        return changes_counter
 
     """deletes the i'th item in the list
 
@@ -417,7 +459,7 @@ class AVLTreeList(object):
     """
 
     def length(self):
-        return self.length
+        return self.size
 
     """splits the list at the i'th index
 
