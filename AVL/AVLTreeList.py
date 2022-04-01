@@ -303,77 +303,79 @@ class AVLTreeList(object):
 
         # Insert new node in the beginning
         if i == 0:
-            parent = self.min
+            current = self.min
             self.min.setLeft(node)
             self.min = node
 
         # Insert new node in the end
         elif i == self.length():
-            parent = self.max
+            current = self.max
             self.max.setRight(node)
             self.max = node
 
         # Insert new node in the middle
         elif 0 < i < self.length():
             parent = self.treeSelectRec(self.root, i)
-            parent = parent.getRight()
-            if parent.isRealNode():
-                while parent.getLeft().isRealNode() == True:
-                    parent = parent.getLeft()
-                parent.setLeft(node)
+            current = parent.getRight()
+            if current.isRealNode():
+                while current.getLeft().isRealNode() == True:
+                    current = current.getLeft()
+                current.setLeft(node)
             else:
-                parent = parent.getParent()
-                parent.setRight(node)
+                current = parent
+                current.setRight(node)
 
         # Update length
         self.size += 1
 
         # Update tree, and perform rotations
         changes_counter = 0
-        while parent != None:
-
+        while current != None:
             # Update size, height, BF
-            parent.setBalanceFactor()
-            BF = parent.getBalanceFactor()
-            oldHeight = parent.getHeight()
-            parent.setAll()
-            newHeight = parent.getHeight()
+            current.setBalanceFactor()
+            BF = current.getBalanceFactor()
+            oldHeight = current.getHeight()
+            current.setAll()
+            newHeight = current.getHeight()
 
             if -2 < BF < 2 and oldHeight == newHeight:
-                self.updateAllNodes(parent)
+                self.updateAllNodes(current)
                 return changes_counter
 
             if -2 < BF < 2 and oldHeight != newHeight:
-                parent = parent.getParent()
+                current = current.getParent()
                 changes_counter += 1
                 continue
 
             # abs(BF) == 2 -> Need to fix Balance Factor
             else:
                 if BF == 2:
-                    leftBF = parent.left.getBalanceFactor()
+                    leftBF = current.left.getBalanceFactor()
 
                     if leftBF == 1:
-                        self.rightRotation(parent)
-                        self.updateAllNodes(parent)
+                        self.rightRotation(current)
+                        self.updateAllNodes(current)
                         return 1 + changes_counter
 
                     elif leftBF == -1:
-                        self.leftThenRightRotation(parent)
-                        self.updateAllNodes(parent)
+                        self.leftThenRightRotation(current)
+                        self.updateAllNodes(current)
                         return 2 + changes_counter
 
                 if BF == -2:
-                    rightBF = parent.right.getBalanceFactor()
+                    rightBF = current.right.getBalanceFactor()
                     if rightBF == 1:
-                        self.rightThenLeftRotation(parent)
-                        self.updateAllNodes(parent)
+                        self.rightThenLeftRotation(current)
+                        self.updateAllNodes(current)
                         return 2 + changes_counter
 
                     elif rightBF == -1:
-                        self.leftRotation(parent)
-                        self.updateAllNodes(parent)
+                        self.leftRotation(current)
+                        self.updateAllNodes(current)
                         return 1 + changes_counter
+
+                # Crash - shouldn't get here
+                raise AssertionError("abs(rightBF or leftBF) > 2 - Error!")
 
         return changes_counter
 
@@ -435,16 +437,15 @@ class AVLTreeList(object):
 
             return parent
 
-        # the node has right and left child
+        # The node has right and left child
+        # Find successor and swap it with the node to delete
         successor = self.treeSelectRec(self.root, i + 2)
-        new_parent = self.deleteBST(successor)
+        tmp = successor.value
+        successor.value = node.value
+        node.value = tmp
 
-        if parent is None:
-            self.root = successor
-        elif parent.getLeft() == node:
-            parent.setLeft(successor)
-        else:
-            parent.setRight(successor)
+        # Delete the node in place i+1 (now our with our node data)
+        new_parent = self.deleteBST(i + 1)
 
         return new_parent
 
@@ -497,14 +498,12 @@ class AVLTreeList(object):
 
                     if leftBF == 1 or leftBF == 0:
                         self.rightRotation(parent)
-                        self.updateAllNodes(parent)
                         changes_counter += 1
                         parent = parent.getParent()
                         continue
 
                     elif leftBF == -1:
                         self.leftThenRightRotation(parent)
-                        self.updateAllNodes(parent)
                         changes_counter += 2
                         parent = parent.getParent()
                         continue
@@ -513,17 +512,18 @@ class AVLTreeList(object):
                     rightBF = parent.right.getBalanceFactor()
                     if rightBF == 1:
                         self.rightThenLeftRotation(parent)
-                        self.updateAllNodes(parent)
                         changes_counter += 2
                         parent = parent.getParent()
                         continue
 
                     elif rightBF == -1 or rightBF == 0:
                         self.leftRotation(parent)
-                        self.updateAllNodes(parent)
                         changes_counter += 2
                         parent = parent.getParent()
                         continue
+
+                # Crash - shouldn't get here
+                raise AssertionError("abs(rightBF or leftBF) > 2 - Error!")
 
         return changes_counter
 
@@ -700,7 +700,7 @@ class AVLTreeList(object):
     @rtype: Null
     """
 
-    def leftRotation(self, node):  # TODO update tree min\max if neccesry
+    def leftRotation(self, node):
         rNode = node.getRight()
         pNode = node.getParent()
         rlNode = rNode.getLeft()
@@ -714,6 +714,13 @@ class AVLTreeList(object):
             self.root = rNode
         rNode.setLeft(node)
         node.setRight(rlNode)
+
+        # Update nodes data (size, height, BF)
+        nodes_to_update = [rlNode, node, rNode, pNode]
+        for n in nodes_to_update:
+            if n is not None:
+                n.setAll()
+
         return
 
     """performs a right rotation
@@ -739,6 +746,13 @@ class AVLTreeList(object):
             self.root = lNode
         lNode.setRight(node)
         node.setLeft(lrNode)
+
+        # Update nodes data (size, height, BF)
+        nodes_to_update = [lrNode, node, lNode, pNode]
+        for n in nodes_to_update:
+            if n is not None:
+                n.setAll()
+
         return
 
     """performs a left then a right rotation
@@ -768,6 +782,13 @@ class AVLTreeList(object):
         theNode.setLeft(lNode)
         node.setLeft(bNode)
         lNode.setRight(aNode)
+
+        # Update nodes data (size, height, BF)
+        nodes_to_update = [aNode, bNode, node, lNode, theNode, pNode]
+        for n in nodes_to_update:
+            if n is not None:
+                n.setAll()
+
         return
 
     """performs a right then a left rotation
@@ -797,6 +818,13 @@ class AVLTreeList(object):
         theNode.setRight(rNode)
         node.setRight(aNode)
         rNode.setLeft(bNode)
+
+        # Update nodes data (size, height, BF)
+        nodes_to_update = [aNode, bNode, node, rNode, theNode, pNode]
+        for n in nodes_to_update:
+            if n is not None:
+                n.setAll()
+
         return
 
     def display(self):
@@ -808,7 +836,7 @@ class AVLTreeList(object):
         """Returns list of strings, width, height, and horizontal coordinate of the root."""
         # No child.
         if node.getLeft().isRealNode() == False and node.getRight().isRealNode() == False:
-            line = '%s' % node.getValue()
+            line = '%s (%s,%s)' % (node.getValue(), node.getHeight(), node.getSize())
             width = len(line)
             height = 1
             middle = width // 2
@@ -817,7 +845,7 @@ class AVLTreeList(object):
         # Only left child.
         if node.getRight().isRealNode() == False:
             lines, n, p, x = self._display_aux(node.getLeft())
-            s = '%s' % node.getValue()
+            s = '%s (%s,%s)' % (node.getValue(), node.getHeight(), node.getSize())
             u = len(s)
             first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s
             second_line = x * ' ' + '/' + (n - x - 1 + u) * ' '
@@ -827,7 +855,7 @@ class AVLTreeList(object):
         # Only right child.
         if node.getLeft().isRealNode() == False:
             lines, n, p, x = self._display_aux(node.getRight())
-            s = '%s' % node.getValue()
+            s = '%s (%s,%s)' % (node.getValue(), node.getHeight(), node.getSize())
             u = len(s)
             first_line = s + x * '_' + (n - x) * ' '
             second_line = (u + x) * ' ' + '\\' + (n - x - 1) * ' '
@@ -837,7 +865,7 @@ class AVLTreeList(object):
         # Two children.
         left, n, p, x = self._display_aux(node.getLeft())
         right, m, q, y = self._display_aux(node.getRight())
-        s = '%s' % node.getValue()
+        s = '%s (%s,%s)' % (node.getValue(), node.getHeight(), node.getSize())
         u = len(s)
         first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s + y * '_' + (m - y) * ' '
         second_line = x * ' ' + '/' + (n - x - 1 + u + y) * ' ' + '\\' + (m - y - 1) * ' '

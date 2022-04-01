@@ -1,6 +1,7 @@
 import unittest
 from AVLTreeList import AVLTreeList
 import random
+random.seed(10) # Same results
 
 
 class AVLTreeListTest(unittest.TestCase):
@@ -150,19 +151,17 @@ class AVLTreeListTest(unittest.TestCase):
         lst = AVLTreeList()
 
         # Insert 50 items: 0,...,49
-        for i in range(50):
+        for i in range(500):
             lst.insert(i, str(i))
 
         # Insert 50 items at random existing indexes from 0,...,49
-        order = random.sample(range(50), 50)
+        order = random.sample(range(500), 500)
         for i in order:
             lst.insert(i, str(i))
             self.assertEqual(str(i), lst.retrieve(i))
 
-        # Validate size & final order
+        # Validate size
         self.assertEqual(100, lst.length())
-        expected = [str(i) for i in order] + [str(i) for i in range(50)]
-        self.assertListEqual(expected, lst.listToArray())
 
     def test_insert_no_updates(self):
         lst = AVLTreeList()
@@ -184,8 +183,8 @@ class AVLTreeListTest(unittest.TestCase):
         lst.insert(0, '0')
         lst.insert(1, '1')
 
-        # One rotation
-        self.assertEqual(1, lst.insert(2, '2'))
+        # One rotation + 1 height update
+        self.assertEqual(2, lst.insert(2, '2'))
 
     def test_insert_right_rotation(self):
         lst = AVLTreeList()
@@ -194,8 +193,8 @@ class AVLTreeListTest(unittest.TestCase):
         lst.insert(0, '2')
         lst.insert(0, '1')
 
-        # One rotation
-        self.assertEqual(1, lst.insert(0, '0'))
+        # One rotation + 1 height update
+        self.assertEqual(2, lst.insert(0, '0'))
 
     def test_insert_right_left_rotation(self):
         lst = AVLTreeList()
@@ -204,8 +203,8 @@ class AVLTreeListTest(unittest.TestCase):
         lst.insert(0, '0')
         lst.insert(1, '2')
 
-        # Two rotations
-        self.assertEqual(2, lst.insert(1, '1'))
+        # Two rotations + 1 height update
+        self.assertEqual(3, lst.insert(1, '1'))
 
     def test_insert_left_right_rotation(self):
         lst = AVLTreeList()
@@ -214,29 +213,30 @@ class AVLTreeListTest(unittest.TestCase):
         lst.insert(0, '8')
         lst.insert(0, '6')
 
-        # Two rotations
-        self.assertEqual(2, lst.insert(1, '7'))
+        # Two rotations + 1 height update
+        self.assertEqual(3, lst.insert(1, '7'))
 
     def test_delete_simple(self):
         lst = AVLTreeList()
 
-        for i in range(50):
+        for i in range(500):
             lst.insert(i, str(i))
 
-        for i in range(50):
+        for i in reversed(range(500)):
             lst.delete(i)
-            self.assertIsNone(lst.search(str(i)))
+            self.assertEqual(-1, lst.search(str(i)))
 
     def test_delete_random_order(self):
         lst = AVLTreeList()
 
-        for i in range(100):
+        for i in range(1000):
             lst.insert(i, str(i))
 
-        for i in random.sample(range(50), 50):
+        for i in reversed(random.sample(range(500), 500)):
             index = lst.search(str(i))
+            self.assertNotEqual(-1, index)
             lst.delete(index)
-            self.assertIsNone(lst.search(str(i)))
+            self.assertEqual(-1, lst.search(str(i)))
 
     def test_delete_insert_mix(self):
         lst = AVLTreeList()
@@ -252,8 +252,9 @@ class AVLTreeListTest(unittest.TestCase):
             else:
                 # Delete
                 index = lst.search(str(i))
+                self.assertNotEqual(-1, index)
                 lst.delete(index)
-                self.assertIsNone(lst.search(str(i)))
+                self.assertEqual(-1, lst.search(str(i)))
 
     def test_delete_no_updates(self):
         lst = AVLTreeList()
@@ -291,8 +292,8 @@ class AVLTreeListTest(unittest.TestCase):
         lst.insert(0, '3')
         lst.insert(3, '8')
 
-        # One rotation
-        self.assertEqual(1, lst.delete(0))
+        # One rotation + 1 height update
+        self.assertEqual(2, lst.delete(0))
 
     def test_delete_right_left_rotation(self):
         lst = AVLTreeList()
