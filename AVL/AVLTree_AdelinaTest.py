@@ -45,10 +45,10 @@ class AVLTreeListTest(unittest.TestCase):
     def test_search_unique(self):
         lst = AVLTreeList()
 
-        for i in range(50):
+        for i in range(500):
             lst.insert(i, str(i))
 
-        rng = range(50)
+        rng = range(500)
         for i in random.sample(rng, len(rng)):
             self.assertEqual(i, lst.search(str(i)), "search() failed for i = {}".format(i))
 
@@ -151,17 +151,17 @@ class AVLTreeListTest(unittest.TestCase):
         lst = AVLTreeList()
 
         # Insert 50 items: 0,...,49
-        for i in range(500):
+        for i in range(5000):
             lst.insert(i, str(i))
 
         # Insert 50 items at random existing indexes from 0,...,49
-        order = random.sample(range(500), 500)
+        order = random.sample(range(5000), 5000)
         for i in order:
             lst.insert(i, str(i))
             self.assertEqual(str(i), lst.retrieve(i))
 
         # Validate size
-        self.assertEqual(100, lst.length())
+        self.assertEqual(10000, lst.length())
 
     def test_insert_no_updates(self):
         lst = AVLTreeList()

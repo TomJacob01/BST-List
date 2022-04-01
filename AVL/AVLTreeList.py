@@ -195,7 +195,7 @@ class AVLTreeList(object):
 
     """
 
-    def __init__(self):  # TODO: update the feilds in insertion\deletion\concat\split
+    def __init__(self):
         self.root = None
         self.min = None  # first Node on the list
         self.max = None  # Last node on the list
@@ -236,44 +236,7 @@ class AVLTreeList(object):
         else:
             return self.treeSelectRec(node.getRight(), k - rank)
 
-    """retrieves the i'th item in the list
-
-        @type i: int
-        @pre: 0 <= i < self.length()
-        @param i: index in the list
-        @rtype: AVLNode
-        @returns: the the i'th item in the list
-        @description: we use this function for implementing retrieve and insert
-        """
-
-    def retrieveHelper(self, i):
-
-        x = self.getRoot()
-        xSize = x.getLeft().getSize()
-
-        while i >= 0:
-            if xSize == i:
-                return x
-
-            if xSize < i:
-                i = i - (xSize + 1)
-                x = x.getRight()
-                if x.isReal == False:
-                    xSize = 0
-                else:
-                    xSize = x.getLeft().getSize()
-                continue
-
-            if xSize > i:
-                x = x.getLeft()
-                if x.getLeft().isReal == False:
-                    xSize = 0
-                else:
-                    xSize = x.getLeft().getSize()
-                continue
-
     def updateAllNodes(self, node):
-
         while node.getParent() != None:
             node.setAll()
             node = node.getParent()
@@ -348,7 +311,7 @@ class AVLTreeList(object):
                 continue
 
             # abs(BF) == 2 -> Need to fix Balance Factor
-            else:
+            elif abs(BF) == 2:
                 if BF == 2:
                     leftBF = current.left.getBalanceFactor()
 
@@ -374,8 +337,11 @@ class AVLTreeList(object):
                         self.updateAllNodes(current)
                         return 1 + changes_counter
 
-                # Crash - shouldn't get here
-                raise AssertionError("abs(rightBF or leftBF) > 2 - Error!")
+                # Shouldn't get here
+                raise AssertionError("abs(rightBF or leftBF) > 1 - Error!")
+
+            # Shouldn't get here
+            raise AssertionError("abs(BF) > 2 - Error!")
 
         return changes_counter
 
@@ -483,8 +449,8 @@ class AVLTreeList(object):
             newHeight = parent.getHeight()
 
             if -2 < BF < 2 and oldHeight == newHeight:
-                self.updateAllNodes(parent)
-                return changes_counter
+                parent = parent.getParent()
+                continue
 
             if -2 < BF < 2 and oldHeight != newHeight:
                 parent = parent.getParent()
@@ -492,7 +458,7 @@ class AVLTreeList(object):
                 continue
 
             # abs(BF) == 2 -> Need to fix Balance Factor
-            else:
+            elif abs(BF) == 2:
                 if BF == 2:
                     leftBF = parent.left.getBalanceFactor()
 
@@ -522,8 +488,11 @@ class AVLTreeList(object):
                         parent = parent.getParent()
                         continue
 
-                # Crash - shouldn't get here
-                raise AssertionError("abs(rightBF or leftBF) > 2 - Error!")
+                # Shouldn't get here
+                raise AssertionError("abs(rightBF or leftBF) > 1 - Error!")
+
+            # Shouldn't get here
+            raise AssertionError("abs(BF) > 2 - Error!")
 
         return changes_counter
 
@@ -557,7 +526,6 @@ class AVLTreeList(object):
     @returns: a list of strings representing the data structure
     """
 
-    # TODO: Fix. Function should return a list not print it
     def listToArray(self):
 
         """
@@ -716,7 +684,7 @@ class AVLTreeList(object):
         node.setRight(rlNode)
 
         # Update nodes data (size, height, BF)
-        nodes_to_update = [rlNode, node, rNode, pNode]
+        nodes_to_update = [node, rNode]
         for n in nodes_to_update:
             if n is not None:
                 n.setAll()
@@ -732,7 +700,7 @@ class AVLTreeList(object):
     @rtype: Null
     """
 
-    def rightRotation(self, node):  # TODO update tree min\max if neccesry
+    def rightRotation(self, node):
         pNode = node.getParent()
         lNode = node.getLeft()
         lrNode = lNode.getRight()
@@ -748,7 +716,7 @@ class AVLTreeList(object):
         node.setLeft(lrNode)
 
         # Update nodes data (size, height, BF)
-        nodes_to_update = [lrNode, node, lNode, pNode]
+        nodes_to_update = [node, lNode]
         for n in nodes_to_update:
             if n is not None:
                 n.setAll()
@@ -765,6 +733,7 @@ class AVLTreeList(object):
     """
 
     def leftThenRightRotation(self, node):
+
         lNode = node.getLeft()
         pNode = node.getParent()
         theNode = lNode.getRight()
@@ -784,7 +753,7 @@ class AVLTreeList(object):
         lNode.setRight(aNode)
 
         # Update nodes data (size, height, BF)
-        nodes_to_update = [aNode, bNode, node, lNode, theNode, pNode]
+        nodes_to_update = [node, lNode, theNode]
         for n in nodes_to_update:
             if n is not None:
                 n.setAll()
@@ -801,6 +770,7 @@ class AVLTreeList(object):
     """
 
     def rightThenLeftRotation(self, node):
+
         rNode = node.getRight()
         pNode = node.getParent()
         theNode = rNode.getLeft()
@@ -820,7 +790,7 @@ class AVLTreeList(object):
         rNode.setLeft(bNode)
 
         # Update nodes data (size, height, BF)
-        nodes_to_update = [aNode, bNode, node, rNode, theNode, pNode]
+        nodes_to_update = [node, rNode, theNode]
         for n in nodes_to_update:
             if n is not None:
                 n.setAll()
@@ -836,7 +806,7 @@ class AVLTreeList(object):
         """Returns list of strings, width, height, and horizontal coordinate of the root."""
         # No child.
         if node.getLeft().isRealNode() == False and node.getRight().isRealNode() == False:
-            line = '%s (%s,%s)' % (node.getValue(), node.getHeight(), node.getSize())
+            line = '%s (%s,%s,%s)' % (node.getValue(), node.getHeight(), node.getSize(), node.getBalanceFactor())
             width = len(line)
             height = 1
             middle = width // 2
@@ -845,7 +815,7 @@ class AVLTreeList(object):
         # Only left child.
         if node.getRight().isRealNode() == False:
             lines, n, p, x = self._display_aux(node.getLeft())
-            s = '%s (%s,%s)' % (node.getValue(), node.getHeight(), node.getSize())
+            s = '%s (%s,%s,%s)' % (node.getValue(), node.getHeight(), node.getSize(), node.getBalanceFactor())
             u = len(s)
             first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s
             second_line = x * ' ' + '/' + (n - x - 1 + u) * ' '
@@ -855,7 +825,7 @@ class AVLTreeList(object):
         # Only right child.
         if node.getLeft().isRealNode() == False:
             lines, n, p, x = self._display_aux(node.getRight())
-            s = '%s (%s,%s)' % (node.getValue(), node.getHeight(), node.getSize())
+            s = '%s (%s,%s,%s)' % (node.getValue(), node.getHeight(), node.getSize(), node.getBalanceFactor())
             u = len(s)
             first_line = s + x * '_' + (n - x) * ' '
             second_line = (u + x) * ' ' + '\\' + (n - x - 1) * ' '
@@ -865,7 +835,7 @@ class AVLTreeList(object):
         # Two children.
         left, n, p, x = self._display_aux(node.getLeft())
         right, m, q, y = self._display_aux(node.getRight())
-        s = '%s (%s,%s)' % (node.getValue(), node.getHeight(), node.getSize())
+        s = '%s (%s,%s,%s)' % (node.getValue(), node.getHeight(), node.getSize(), node.getBalanceFactor())
         u = len(s)
         first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s + y * '_' + (m - y) * ' '
         second_line = x * ' ' + '/' + (n - x - 1 + u + y) * ' ' + '\\' + (m - y - 1) * ' '
