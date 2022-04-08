@@ -6,8 +6,6 @@ random.seed(10) # Same results
 
 class AVLTreeListTest(unittest.TestCase):
 
-
-
     def test_empty(self):
         lst = AVLTreeList()
         self.assertTrue(lst.empty())
@@ -337,7 +335,7 @@ class AVLTreeListTest(unittest.TestCase):
         # Concat non-empty list to empty
         lst_empty = AVLTreeList()
         self.assertEqual(1, lst_empty.concat(lst))
-        print(lst_empty.retrieve(0))
+        self.assertListEqual(["0"], lst_empty.listToArray())
 
     def test_concat_same_size(self):
         lst1 = AVLTreeList()
