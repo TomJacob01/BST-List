@@ -648,6 +648,8 @@ class AVLTreeList(object):
     """joins lst to self
         @type lst: AVLTreeList
         @param lst: a list to be concatenated after self
+        @type isSelfBigger: boolean
+        @param isSelfBigger: is True iff self.length() >= lst.length()
         @type x: AVLNode
         @param x: a node to help join self and lst
         @rtype: None
