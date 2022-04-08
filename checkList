@@ -1,7 +1,5 @@
-27/03:
+08/04:
 
-functions: insert, delete
-           Split, Concat, Search
+functions: split []
 
-testers: insertFirst, insertLast, successor, length, first, last and all of the above
 
