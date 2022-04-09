@@ -178,6 +178,28 @@ class AVLNode(object):
             self.setHeight(max(self.right.height, self.left.height) + 1)
             self.setSize()
 
+    """finds a successor to node
+    @rtype: AVLNode
+    @returns: the successor of node, or None if there is not a successor
+    """
+
+    def successor(self):
+        if self.isReal:
+            current = self.getRight()
+            if current.isReal:
+                while current.getLeft().isReal:
+                    current = current.getLeft()
+                return current
+            parent = self.getParent()
+            current = self
+            while (parent is not None):
+                if (parent.getLeft() == current):
+                    return parent
+                current = parent
+                parent = current.getParent()
+
+        return None
+
 
 """
 A class implementing the ADT list, using an AVL tree.
@@ -576,7 +598,7 @@ class AVLTreeList(object):
         lstRoot = lst.getRoot()
         selfRoot = self.getRoot()
 
-        # Special conditions- join empty list
+        # Special conditions- concat empty list
 
         if lstRoot is None and selfRoot is None:
             return 0
@@ -590,7 +612,7 @@ class AVLTreeList(object):
         selfHeight = selfRoot.getHeight()
         lstHeight = lstRoot.getHeight()
 
-        #Special conditions- join small lists
+        #Special conditions- concat very small lists
 
         if lstRoot.getSize() < 2:
             if lstRoot.getSize() == 1:
@@ -602,16 +624,18 @@ class AVLTreeList(object):
                 lst.insert(lst.length, selfRoot.value)
             self = lst
             return lstHeight
-
-        #Genral case
+        
         #self is bigger
+        
         if lstHeight <= selfHeight:
             root = lstRoot
             value = lst.min.value
             x = AVLNode(value)
             lst.delete(0)
             self.join(x, lst)
+            
         #lst is bigger
+        
         else:
             root = selfRoot
             value = self.max.value
@@ -621,35 +645,9 @@ class AVLTreeList(object):
             self.join(x,lst,False)
         return abs(selfHeight - lstHeight)
 
-    """finds a successor to node
-        @type node: AVLNode
-        @param lst: a node that we need to finds its successor
-        @rtype: AVLNode
-        @returns: the successor of node, or None if there is not a successor
-        """
-
-    def successor(self, node):
-        if node.isReal:
-            current = node.getRight()
-            if current.isReal:
-                while current.getLeft().isReal:
-                    current = current.getLeft()
-                return current
-            parent = node.getParent()
-            current = node
-            while (parent is not None):
-                if (parent.getLeft() == current):
-                    return parent
-                current = parent
-                parent = current.getParent()
-
-        return None
-
     """joins lst to self
         @type lst: AVLTreeList
         @param lst: a list to be concatenated after self
-        @type isSelfBigger: boolean
-        @param isSelfBigger: is True iff self.length() >= lst.length()
         @type x: AVLNode
         @param x: a node to help join self and lst
         @rtype: None
@@ -657,22 +655,23 @@ class AVLTreeList(object):
 
     def join(self, x, lst, isSelfBigger=True):
         if isSelfBigger:
-            current = self.max
             theRoot = lst.getRoot()
             otherRoot = self.getRoot()
         elif not isSelfBigger:
-            current = lst.min
             theRoot = self.getRoot()
             otherRoot = lst.getRoot()
-        Height = theRoot.getHeight()
+        heightDiff = otherRoot.getHeight() - theRoot.getHeight()
+        current = otherRoot
 
-        #we go up on the bigger tree
+        # we go down on the bigger tree
 
-        for i in range(Height):
-            if current.getParent() is not None:
-                current = current.getParent()
+        for i in range(heightDiff):
+            if isSelfBigger:
+                current = current.getRight()
+            elif not isSelfBigger:
+                current = current.getLeft()
 
-        #different height of trees
+        # different height of trees
 
         if current != otherRoot:
             parent = current.getParent()
@@ -680,14 +679,16 @@ class AVLTreeList(object):
                 parent.setRight(x)
             elif not isSelfBigger:
                 parent.setLeft(x)
-        #same height of trees
+
+        # same height of trees
+
         elif current == otherRoot:
             if isSelfBigger:
                 self.root = x
             elif not isSelfBigger:
                 lst.root = x
 
-        #setting the conections
+        # setting the conections
 
         if isSelfBigger:
             x.setRight(lst.root)
@@ -696,7 +697,9 @@ class AVLTreeList(object):
             x.setLeft(self.root)
             x.setRight(current)
             self.root = lst.root
-
+        
+        # Updating nodes
+        
         x.getRight().setAll()
         self.updateAllNodes(x.getLeft())
         lst = None
