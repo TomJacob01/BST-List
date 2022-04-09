@@ -585,7 +585,71 @@ class AVLTreeList(object):
     """
 
     def split(self, i):
-        return None
+        nodeOfValue = self.treeSelectRec(self.root, i + 1)
+        current = nodeOfValue
+        parent = current.getParent()
+        right = AVLTreeList()
+        left = AVLTreeList()
+        tmp = AVLTreeList()
+        tempo = AVLTreeList()
+        value = nodeOfValue.getValue()
+        cameFromLeft = False
+
+        #updating right and tmp
+        if nodeOfValue.getRight().isReal:
+            tempo.root = nodeOfValue.getRight()
+            tempo.root.setParent(None)
+            right.concat(tempo)
+        if nodeOfValue.getLeft().isReal:
+            tmp.root = nodeOfValue.getLeft()
+            tmp.root.setParent(None)
+
+
+        #going up the tree
+        while current is not None:
+            if  parent is None and cameFromLeft:
+                if current.getRight().isReal:
+                    current = current.getRight()
+                    current.setParent(None)
+                    tempo = AVLTreeList()
+                    tempo.root = current
+                    tempo.size = current.size
+                    right.concat(tempo)
+
+                elif not current.getRight().isReal:
+                    tempo = AVLTreeList()
+                    tempo.insert(0, current.value)
+                    right.concat(tempo)
+                break
+
+            elif parent is not None:
+                if parent.getLeft() == current:
+                    cameFromLeft = True
+                    L = right.length()
+                    val = parent.value
+                    semi = AVLNode(val)
+                    if current.getRight().isReal:
+                        tempo = AVLTreeList()
+                        newRoot = parent.getRight()
+                        newRoot.setParent(None)
+                        tempo.root = newRoot
+                        right.join(semi, tempo)
+                    elif not current.getRight().isReal:
+                        tempo = AVLTreeList()
+                        tempo.insert(0, val)
+                        right.concat(tempo)
+                elif parent.getRight() != current:
+                    cameFromLeft = False
+                    if current.getLeft().isReal:
+                        left = current.getLeft()
+                        left.join(parent, tmp)
+                        tmp = left
+                    else:
+                        print("shouldent get here probably")
+                current = current.getParent()
+                parent = parent.getParent()
+
+        return [left, value, right]
 
     """concatenates lst to self
     @type lst: AVLTreeList
