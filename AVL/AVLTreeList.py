@@ -634,7 +634,6 @@ class AVLTreeList(object):
 
             elif parent is not None: # TODO
                 if cameFromLeft:
-                    L = right.length()
                     semi = AVLNode(parent.value)
                     if current.getRight().isReal:
                         newRoot = parent.getRight()
@@ -645,11 +644,12 @@ class AVLTreeList(object):
 
                 else: # not came from left
                     if current.getLeft().isReal:
-                        left = current.getLeft()
+                        left.setRoot(current.getLeft())
                         left.join(parent, tmp)
                         tmp = left
                     else: # TODO
                         left.insert(0, semi)
+                        tmp = left
 
                 #updating cameFromLeft
                 if parent.getLeft() == current:
@@ -674,7 +674,6 @@ class AVLTreeList(object):
         selfRoot = self.getRoot()
 
         # Special conditions- concat empty list
-
         if lstRoot is None and selfRoot is None:
             return 0
         if lstRoot is None:
@@ -687,7 +686,6 @@ class AVLTreeList(object):
         lstHeight = lstRoot.getHeight()
 
         # Special conditions- concat very small lists
-
         if lstRoot.getSize() == 1:
             self.insert(self.length(), lstRoot.value)
             return selfHeight
@@ -698,7 +696,6 @@ class AVLTreeList(object):
             return lstHeight
 
         # self is bigger
-
         if lstHeight <= selfHeight:
             value = lst.min.value
             x = AVLNode(value)
@@ -706,9 +703,7 @@ class AVLTreeList(object):
             self.join(x, lst)
 
         # lst is bigger
-
         else:
-            root = selfRoot
             value = self.max.value
             x = AVLNode(value)
             L = self.length()
@@ -733,11 +728,22 @@ class AVLTreeList(object):
             isSelfBigger = False
             theRoot = self.getRoot()
             otherRoot = lst.getRoot()
+
+        # Special conditions- concat an empty list
+        if self.root is None and lst.root is None:
+            self.insert(0, x.value)
+            return
+        if lst.root is None:
+            self.insert(self.size, x.value)
+            return
+        if self.root is None:
+            self.stealRoot(lst)
+            return
+
         heightDiff = otherRoot.getHeight() - theRoot.getHeight()
         current = otherRoot
 
         # we go down on the bigger tree
-
         for i in range(heightDiff):
             if isSelfBigger:
                 current = current.getRight()
@@ -745,7 +751,6 @@ class AVLTreeList(object):
                 current = current.getLeft()
 
         # different height of trees
-
         if current != otherRoot:
             parent = current.getParent()
             if isSelfBigger:
@@ -754,15 +759,13 @@ class AVLTreeList(object):
                 parent.setLeft(x)
 
         # same height of trees
-
         elif current == otherRoot:
             if isSelfBigger:
                 self.root = x
             elif not isSelfBigger:
                 lst.root = x
 
-        # setting the conections
-
+        # setting the connections
         if isSelfBigger:
             x.setRight(lst.root)
             x.setLeft(current)
@@ -772,10 +775,8 @@ class AVLTreeList(object):
             self.root = lst.root
 
         # Updating nodes
-
         x.getRight().setAll()
         self.updateAllNodes(x.getLeft())
-        lst = None
 
     """searches for a *value* in the list
     @note Run in O(n) time
