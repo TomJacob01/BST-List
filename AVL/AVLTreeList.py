@@ -290,7 +290,7 @@ class AVLTreeList(object):
             self.max = node
 
         # Insert new node in the middle
-        elif 0 < i < self.length():
+        elif 0 < i < self.size:
             parent = self.treeSelectRec(self.root, i)
             current = parent.getRight()
             if current.isRealNode():
@@ -528,7 +528,6 @@ class AVLTreeList(object):
         return self.max.getValue()
 
     """returns an array representing list 
-
     @note Run in O(n) time
     @rtype: list
     @returns: a list of strings representing the data structure
@@ -590,30 +589,32 @@ class AVLTreeList(object):
         parent = current.getParent()
         right = AVLTreeList()
         left = AVLTreeList()
-        tmp = AVLTreeList()
-        tempo = AVLTreeList()
+        tmp = AVLTreeList() # helps to update left in the correct order
+        tempo = AVLTreeList() # helps to update right
         value = nodeOfValue.getValue()
         cameFromLeft = False
+        virtualNode = AVLNode(None,False)
 
         #updating right and tmp
+        if parent is not None:
+            if parent.getLeft() == current:
+                cameFromLeft = True
+
+            current = parent
+            parent = current.getParent()
         if nodeOfValue.getRight().isReal:
-            tempo.root = nodeOfValue.getRight()
-            tempo.root.setParent(None)
-            right.concat(tempo)
+            right.setRoot(nodeOfValue.getRight())
         if nodeOfValue.getLeft().isReal:
-            tmp.root = nodeOfValue.getLeft()
-            tmp.root.setParent(None)
+            tmp.setRoot(nodeOfValue.getLeft())
 
 
         #going up the tree
         while current is not None:
-            if  parent is None and cameFromLeft:
+            if parent is None and cameFromLeft:
                 if current.getRight().isReal:
-                    current = current.getRight()
-                    current.setParent(None)
-                    tempo = AVLTreeList()
-                    tempo.root = current
-                    tempo.size = current.size
+                    M = right.length()
+                    right.insert(M, current.value)
+                    tempo.setRoot(current.getRight())
                     right.concat(tempo)
 
                 elif not current.getRight().isReal:
@@ -622,31 +623,41 @@ class AVLTreeList(object):
                     right.concat(tempo)
                 break
 
-            elif parent is not None:
-                if parent.getLeft() == current:
-                    cameFromLeft = True
+            elif parent is None and not cameFromLeft:
+                if current.getLeft().isReal: # TODO tmp is feeding left twice
+                    if left.size == 0:
+                        left = tmp
+                    else: # left.size > 0
+                        left.setRoot(current.getLeft())
+                        left.concat(tmp)
+                break
+
+            elif parent is not None: # TODO
+                if cameFromLeft:
                     L = right.length()
-                    val = parent.value
-                    semi = AVLNode(val)
+                    semi = AVLNode(parent.value)
                     if current.getRight().isReal:
-                        tempo = AVLTreeList()
                         newRoot = parent.getRight()
-                        newRoot.setParent(None)
-                        tempo.root = newRoot
+                        tempo.setRoot(newRoot)
                         right.join(semi, tempo)
-                    elif not current.getRight().isReal:
-                        tempo = AVLTreeList()
-                        tempo.insert(0, val)
-                        right.concat(tempo)
-                elif parent.getRight() != current:
-                    cameFromLeft = False
+                    else: # not current.getRight().isReal:
+                        right.insert(right.size, semi)
+
+                else: # not came from left
                     if current.getLeft().isReal:
                         left = current.getLeft()
                         left.join(parent, tmp)
                         tmp = left
-                    else:
-                        print("shouldent get here probably")
-                current = current.getParent()
+                    else: # TODO
+                        left.insert(0, semi)
+
+                #updating cameFromLeft
+                if parent.getLeft() == current:
+                    cameFromLeft = True
+                else: #
+                    cameFromLeft = False
+
+                current = parent
                 parent = parent.getParent()
 
         return [left, value, right]
@@ -669,44 +680,40 @@ class AVLTreeList(object):
         if lstRoot is None:
             return selfRoot.getHeight() + 1
         if selfRoot is None:
-            self.insert(0, lstRoot.getValue())
-            lst = None
+            self.stealRoot(lst)
             return lstRoot.getHeight() + 1
 
         selfHeight = selfRoot.getHeight()
         lstHeight = lstRoot.getHeight()
 
-        #Special conditions- concat very small lists
+        # Special conditions- concat very small lists
 
-        if lstRoot.getSize() < 2:
-            if lstRoot.getSize() == 1:
-                self.insert(self.length, lstRoot.value)
+        if lstRoot.getSize() == 1:
+            self.insert(self.length(), lstRoot.value)
             return selfHeight
 
-        if selfRoot.getSize() < 2:
-            if selfRoot.getSize() == 1:
-                lst.insert(lst.length, selfRoot.value)
-            self = lst
+        if selfRoot.getSize() == 1:
+            lst.insert(0, selfRoot.value)
+            self.stealRoot(lst)
             return lstHeight
-        
-        #self is bigger
-        
+
+        # self is bigger
+
         if lstHeight <= selfHeight:
-            root = lstRoot
             value = lst.min.value
             x = AVLNode(value)
             lst.delete(0)
             self.join(x, lst)
-            
-        #lst is bigger
-        
+
+        # lst is bigger
+
         else:
             root = selfRoot
             value = self.max.value
             x = AVLNode(value)
             L = self.length()
             self.delete(L - 1)
-            self.join(x,lst,False)
+            self.join(x, lst)
         return abs(selfHeight - lstHeight)
 
     """joins lst to self
@@ -717,11 +724,13 @@ class AVLTreeList(object):
         @rtype: None
         """
 
-    def join(self, x, lst, isSelfBigger=True):
-        if isSelfBigger:
+    def join(self, x, lst):
+        if self.size >= lst.size:
+            isSelfBigger = True
             theRoot = lst.getRoot()
             otherRoot = self.getRoot()
-        elif not isSelfBigger:
+        else: # self.size < lst.size
+            isSelfBigger = False
             theRoot = self.getRoot()
             otherRoot = lst.getRoot()
         heightDiff = otherRoot.getHeight() - theRoot.getHeight()
@@ -761,15 +770,14 @@ class AVLTreeList(object):
             x.setLeft(self.root)
             x.setRight(current)
             self.root = lst.root
-        
+
         # Updating nodes
-        
+
         x.getRight().setAll()
         self.updateAllNodes(x.getLeft())
         lst = None
 
     """searches for a *value* in the list
-
     @note Run in O(n) time
     @type val: str
     @param val: a value to be searched
@@ -830,6 +838,42 @@ class AVLTreeList(object):
         if self.empty():
             return None
         return self.root
+
+    """sets the root of the tree and updates all fields
+    @param root: the new root we want to have 
+    @type root: AVLNode
+    @rtype: None
+    """
+
+    def setRoot(self, root):
+        root.setParent(None)
+        self.root = root
+        self.size = root.size
+        current = root
+        while current.getLeft().isReal:
+            current = current.getLeft()
+        self.min = current
+        current = root
+        while current.getRight().isReal:
+            current = current.getRight()
+        self.max = current
+
+    """self takes place of lst, we use if for concat
+    @param lst: the list we want to steal from and delete
+    @type lst: AVLTreeList
+    @rtype: None
+    """
+
+    def stealRoot(self,lst):
+        self.root = lst.root
+        self.max = lst.max
+        self.min = lst.min
+        self.size = lst.size
+        lst.root = None
+        lst.max = None
+        lst.min = None
+        lst.size = 0
+
 
     """performs a left rotation
     @type Node: AVLNode
