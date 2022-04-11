@@ -581,19 +581,18 @@ class AVLTreeList(object):
     right is an AVLTreeList representing the list from index i+1, and val is the value at the i'th index.
     """
 
-        def split(self, i):
+    def split(self, i):
         nodeOfValue = self.tree_select_rec(self.root, i + 1)
         current = nodeOfValue
         parent = current.getParent()
         right = AVLTreeList()
         left = AVLTreeList()
-        tmp = AVLTreeList()  # helps to update left in the correct order
-        tempo = AVLTreeList()  # helps to update right
-        value = nodeOfValue.getValue()
+        left_helper = AVLTreeList()  # helps to update left in the correct order
+        right_helper = AVLTreeList()  # helps to update right
         cameFromLeft = False
         isRoot = False
 
-        # updating right and tmp
+        # updating right and left_helper
         if parent is not None:
             if parent.getLeft() == current:
                 cameFromLeft = True
@@ -604,7 +603,7 @@ class AVLTreeList(object):
         if nodeOfValue.getRight().isReal:
             right.set_root(nodeOfValue.getRight())
         if nodeOfValue.getLeft().isReal:
-            tmp.set_root(nodeOfValue.getLeft())
+            left_helper.set_root(nodeOfValue.getLeft())
 
         # going up the tree
         while current is not None:
@@ -612,31 +611,31 @@ class AVLTreeList(object):
             if cameFromLeft:
                 if current.getRight().isReal:
                     right.insert(right.size, current.value)
-                    tempo.set_root(current.getRight())
-                    right.concat(tempo)
+                    right_helper.set_root(current.getRight())
+                    right.concat(right_helper)
 
                 elif not current.getRight().isReal:
                     right.insert(right.size, current.value)
 
-                if parent is None and tmp.size != 0:
-                    left = tmp
+                if parent is None and left_helper.size != 0:
+                    left = left_helper
 
             # adding to left
             elif not cameFromLeft:
                 if parent is None:
                     if left.size == 0:
-                        left.steal_root(tmp)
+                        left.steal_root(left_helper)
                         if isRoot:
                             break
                 if current.getLeft().isReal:
                     if left.size != 0:
-                        tmp.steal_root(left)
+                        left_helper.steal_root(left)
                     new_Node = AVLNode(current.value)
                     left.set_root(current.getLeft())
-                    left.join(new_Node, tmp)
-                else:  # TODO
+                    left.join(new_Node, left_helper)
+                else:
                     left.insert(0, current.value)
-                tmp = AVLTreeList()
+                    left_helper = AVLTreeList()
 
             # updating cameFromLeft
             if parent is None:
@@ -649,8 +648,7 @@ class AVLTreeList(object):
             current = parent
             parent = parent.getParent()
 
-        return [left, value, right]
-
+        return [left, nodeOfValue.value, right]
 
     """concatenates lst to self
     @type lst: AVLTreeList
@@ -773,6 +771,7 @@ class AVLTreeList(object):
         self.update_all_nodes(x.getLeft())
         self.size = newSize
         self.max = lstMax
+        lst.set_root(None)
 
     """searches for a *value* in the list
     @note Run in O(n) time
