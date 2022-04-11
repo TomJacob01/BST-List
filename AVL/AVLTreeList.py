@@ -581,7 +581,7 @@ class AVLTreeList(object):
     right is an AVLTreeList representing the list from index i+1, and val is the value at the i'th index.
     """
 
-    def split(self, i):
+        def split(self, i):
         nodeOfValue = self.tree_select_rec(self.root, i + 1)
         current = nodeOfValue
         parent = current.getParent()
@@ -608,43 +608,32 @@ class AVLTreeList(object):
 
         # going up the tree
         while current is not None:
-            if parent is None and cameFromLeft:
+            if cameFromLeft:
                 if current.getRight().isReal:
                     right.insert(right.size, current.value)
                     tempo.set_root(current.getRight())
                     right.concat(tempo)
 
                 elif not current.getRight().isReal:
-                    tempo = AVLTreeList()
-                    tempo.insert(0, current.value)
-                    right.concat(tempo)
-                if tmp.size != 0:
+                    right.insert(right.size, current.value)
+
+                if parent is None and tmp.size != 0:
                     left = tmp
-                break
 
-            elif parent is None and not cameFromLeft:
-                if left.size == 0:  # TODO tmp is feeding left twice
-                    left.steal_root(tmp)
-                    if isRoot:
-                        break
-                if current.getLeft().isReal:
-                    tmp.set_root(current.getLeft())
-                    tmp.insert(tmp.size, current.value)
-                    tmp.concat(left)
-                left = tmp
-                break
+            elif not cameFromLeft:
+                if parent is None:
+                    if left.size == 0:
+                        left.steal_root(tmp)
+                        if isRoot:
+                            break
+                    if current.getLeft().isReal:
+                        tmp.set_root(current.getLeft())
+                        tmp.insert(tmp.size, current.value)
+                        tmp.concat(left)
+                    left = tmp
+                    break
 
-            elif parent is not None:  # TODO
-                if cameFromLeft:
-                    if current.getRight().isReal:
-                        right.insert(right.size, current.value)
-                        newRoot = current.getRight()
-                        tempo.set_root(newRoot)
-                        right.concat(tempo)
-                    elif not current.getRight().isReal:
-                        right.insert(right.size, current.value)
-
-                elif not cameFromLeft:
+                if parent is not None:
                     if current.getLeft().isReal:
                         if left.size != 0:
                             tmp.steal_root(left)
@@ -655,16 +644,19 @@ class AVLTreeList(object):
                         left.insert(0, current.value)
                     tmp = AVLTreeList()
 
-                # updating cameFromLeft
-                if parent.getLeft() == current:
-                    cameFromLeft = True
-                else:  #
-                    cameFromLeft = False
+            # updating cameFromLeft
+            if parent is None:
+                break
+            if parent.getLeft() == current:
+                cameFromLeft = True
+            else:  # parent.getLeft() != current
+                cameFromLeft = False
 
-                current = parent
-                parent = parent.getParent()
+            current = parent
+            parent = parent.getParent()
 
         return [left, value, right]
+
 
     """concatenates lst to self
     @type lst: AVLTreeList
