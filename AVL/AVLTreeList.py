@@ -251,6 +251,7 @@ class AVLTreeList(object):
             return self.treeSelectRec(node.getRight(), k - rank)
 
     def updateAllNodes(self, node):
+        node.setAll()
         while node.getParent() != None:
             node.setAll()
             node = node.getParent()
@@ -615,8 +616,7 @@ class AVLTreeList(object):
         while current is not None:
             if parent is None and cameFromLeft:
                 if current.getRight().isReal:
-                    M = right.length()
-                    right.insert(M, current.value)
+                    right.insert(right.size, current.value)
                     tempo.setRoot(current.getRight())
                     right.concat(tempo)
 
@@ -653,7 +653,7 @@ class AVLTreeList(object):
                 elif not cameFromLeft:
                     if current.getLeft().isReal:
                         if left.size != 0:
-                            tmp.insert(0, left.root.value)
+                            tmp.stealRoot(left)
                         left.setRoot(current.getLeft())
                         left.join(current, tmp)
                     else: # TODO
@@ -716,8 +716,7 @@ class AVLTreeList(object):
         else:
             value = self.max.value
             x = AVLNode(value)
-            L = self.length()
-            self.delete(L - 1)
+            self.delete(self.size - 1)
             self.join(x, lst)
         return abs(selfHeight - lstHeight)
 
@@ -730,6 +729,8 @@ class AVLTreeList(object):
         """
 
     def join(self, x, lst):
+        newSize = self.size + lst.size + 1
+        lstMax = lst.max
         if self.size >= lst.size:
             isSelfBigger = True
             theRoot = lst.getRoot()
@@ -757,9 +758,11 @@ class AVLTreeList(object):
         # we go down on the bigger tree
         for i in range(heightDiff):
             if isSelfBigger:
-                current = current.getRight()
+                if current.getRight().isReal:
+                    current = current.getRight()
             elif not isSelfBigger:
-                current = current.getLeft()
+                if current.getLeft().isReal:
+                    current = current.getLeft()
 
         # different height of trees
         if current != otherRoot:
@@ -788,6 +791,9 @@ class AVLTreeList(object):
         # Updating nodes
         x.getRight().setAll()
         self.updateAllNodes(x.getLeft())
+        self.size = newSize
+        self.max = lstMax
+        self.root.setAll()
 
     """searches for a *value* in the list
     @note Run in O(n) time
