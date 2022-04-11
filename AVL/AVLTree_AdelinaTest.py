@@ -133,20 +133,20 @@ class AVLTreeListTest(unittest.TestCase):
         self.assertListEqual(expected[2], result[2].listToArray())
 
     def test_split(self):
-        # Build tree
-        lst = AVLTreeList()
-        for i in range(50):
-            lst.insert(i, str(i))
-
         # Try to split all indexes
         for i in range(50):
+            # Build tree
+            lst = AVLTreeList()
+            for i in range(50):
+                lst.insert(i, str(i))
+
             expected = [[str(x) for x in range(i)], str(i), [str(x) for x in range(i + 1, 50)]]
             result = lst.split(i)
 
             self.assertListEqual(expected[0], result[0].listToArray(), "split(i) failed for i = {}".format(i))
             self.assertEqual(expected[1], result[1], "split(i) failed for i = {}".format(i))
             self.assertListEqual(expected[2], result[2].listToArray(), "split(i) failed for i = {}".format(i))
-
+            
     def test_insert_random_order(self):
         lst = AVLTreeList()
 
