@@ -293,7 +293,7 @@ class AVLTreeListTest(unittest.TestCase):
         lst.insert(3, '8')
 
         # One rotation + 1 height update
-        self.assertEqual(2, lst.delete(0))
+        self.assertEqual(1, lst.delete(0))
 
     def test_delete_right_left_rotation(self):
         lst = AVLTreeList()
