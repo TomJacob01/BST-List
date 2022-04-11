@@ -1,14 +1,3 @@
-# username1 - Tomjakob
-# id1      - 208938332
-# name1    - Tom Jacob
-# username2 - adelinay
-# id2      - 209225069
-# name2    - Adelina Yershov
-
-
-"""A class representing a node in an AVL tree"""
-
-
 class AVLNode(object):
     """Constructor, you are allowed to add more fields.
     @type value: str
@@ -594,14 +583,17 @@ class AVLTreeList(object):
         value = nodeOfValue.getValue()
         cameFromLeft = False
         virtualNode = AVLNode(None,False)
+        isRoot = False
 
         #updating right and tmp
         if parent is not None:
             if parent.getLeft() == current:
                 cameFromLeft = True
-
+                parent.setLeft(virtualNode)
             current = parent
-            parent = current.getParent()
+            parent = parent.getParent()
+        elif parent is None:
+            isRoot = True
         if nodeOfValue.getRight().isReal:
             right.setRoot(nodeOfValue.getRight())
         if nodeOfValue.getLeft().isReal:
@@ -621,39 +613,44 @@ class AVLTreeList(object):
                     tempo = AVLTreeList()
                     tempo.insert(0, current.value)
                     right.concat(tempo)
+                if tmp.size != 0:
+                    left = tmp
                 break
 
             elif parent is None and not cameFromLeft:
-                if current.getLeft().isReal: # TODO tmp is feeding left twice
-                    if left.size == 0:
-                        left = tmp
-                    else: # left.size > 0
-                        left.setRoot(current.getLeft())
-                        left.concat(tmp)
+                if (left.size == 0):# TODO tmp is feeding left twice
+                    left.stealRoot(tmp)
+                    if isRoot:
+                        break
+                if current.getLeft().isReal:
+                    tmp.setRoot(current.getLeft())
+                    tmp.insert(tmp.size, current.value)
+                    tmp.concat(left)
+                left = tmp
                 break
 
             elif parent is not None: # TODO
                 if cameFromLeft:
-                    semi = AVLNode(parent.value)
                     if current.getRight().isReal:
-                        newRoot = parent.getRight()
+                        right.insert(right.size, current.value)
+                        newRoot = current.getRight()
                         tempo.setRoot(newRoot)
-                        right.join(semi, tempo)
+                        right.concat(tempo)
                     else: # not current.getRight().isReal:
-                        right.insert(right.size, semi)
+                        right.insert(right.size, current.value)
 
-                else: # not came from left
+                elif not cameFromLeft:
                     if current.getLeft().isReal:
                         left.setRoot(current.getLeft())
-                        left.join(parent, tmp)
-                        tmp = left
+                        left.join(current, tmp)
                     else: # TODO
-                        left.insert(0, semi)
-                        tmp = left
+                        left.insert(0, parent.value)
+                    tmp = AVLTreeList()
 
                 #updating cameFromLeft
                 if parent.getLeft() == current:
                     cameFromLeft = True
+                    parent.setLeft(virtualNode)
                 else: #
                     cameFromLeft = False
 
@@ -738,6 +735,7 @@ class AVLTreeList(object):
             return
         if self.root is None:
             self.stealRoot(lst)
+            self.insert(0, x.value)
             return
 
         heightDiff = otherRoot.getHeight() - theRoot.getHeight()
