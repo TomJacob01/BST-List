@@ -306,58 +306,7 @@ class AVLTreeList(object):
         self.size += 1
 
         # Update tree, and perform rotations
-        changes_counter = 0
-        while current is not None:
-            # Update size, height, BF
-            current.setBalanceFactor()
-            BF = current.getBalanceFactor()
-            oldHeight = current.getHeight()
-            current.setAll()
-            newHeight = current.getHeight()
-
-            if -2 < BF < 2 and oldHeight == newHeight:
-                self.update_all_nodes(current)
-                return changes_counter
-
-            if -2 < BF < 2 and oldHeight != newHeight:
-                current = current.getParent()
-                changes_counter += 1
-                continue
-
-            # abs(BF) == 2 -> Need to fix Balance Factor
-            elif abs(BF) == 2:
-                if BF == 2:
-                    leftBF = current.left.getBalanceFactor()
-
-                    if leftBF == 1:
-                        self.right_rotation(current)
-                        self.update_all_nodes(current)
-                        return 1 + changes_counter
-
-                    elif leftBF == -1:
-                        self.left_then_right_rotation(current)
-                        self.update_all_nodes(current)
-                        return 2 + changes_counter
-
-                if BF == -2:
-                    rightBF = current.right.getBalanceFactor()
-                    if rightBF == 1:
-                        self.right_then_left_rotation(current)
-                        self.update_all_nodes(current)
-                        return 2 + changes_counter
-
-                    elif rightBF == -1:
-                        self.left_rotation(current)
-                        self.update_all_nodes(current)
-                        return 1 + changes_counter
-
-                # Shouldn't get here
-                raise AssertionError("abs(rightBF or leftBF) > 1 - Error!")
-
-            # Shouldn't get here
-            raise AssertionError("abs(BF) > 2 - Error!")
-
-        return changes_counter
+        return self.rebalance(current, True)
 
     """deletes the i'th item in the BST
     @type i: int
@@ -455,7 +404,7 @@ class AVLTreeList(object):
     @returns: the number of rebalancing operation due to AVL rebalancing
     """
 
-    def rebalance(self, parent):
+    def rebalance(self, parent, bool=False):
         changes_counter = 0
         while parent is not None:
 
@@ -467,6 +416,9 @@ class AVLTreeList(object):
             newHeight = parent.getHeight()
 
             if -2 < BF < 2 and oldHeight == newHeight:
+                if bool:
+                    self.update_all_nodes(parent)
+                    return changes_counter
                 parent = parent.getParent()
                 continue
 
@@ -483,12 +435,18 @@ class AVLTreeList(object):
                     if leftBF == 1 or leftBF == 0:
                         self.right_rotation(parent)
                         changes_counter += 1
+                        if bool:
+                            self.update_all_nodes(parent)
+                            return changes_counter
                         parent = parent.getParent()
                         continue
 
                     elif leftBF == -1:
                         self.left_then_right_rotation(parent)
                         changes_counter += 2
+                        if bool:
+                            self.update_all_nodes(parent)
+                            return changes_counter
                         parent = parent.getParent()
                         continue
 
@@ -497,11 +455,17 @@ class AVLTreeList(object):
                     if rightBF == 1:
                         self.right_then_left_rotation(parent)
                         changes_counter += 2
+                        if bool:
+                            self.update_all_nodes(parent)
+                            return changes_counter
                         parent = parent.getParent()
                         continue
 
                     elif rightBF == -1 or rightBF == 0:
                         self.left_rotation(parent)
+                        if bool:
+                            self.update_all_nodes(parent)
+                            return 1 + changes_counter
                         changes_counter += 2
                         parent = parent.getParent()
                         continue
