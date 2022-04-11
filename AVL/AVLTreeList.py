@@ -1,14 +1,3 @@
-# username1 - Tomjakob
-# id1      - 208938332
-# name1    - Tom Jacob
-# username2 - adelinay
-# id2      - 209225069
-# name2    - Adelina Yershov
-
-
-"""A class representing a node in an AVL tree"""
-
-
 class AVLNode(object):
     """Constructor, you are allowed to add more fields.
     @type value: str
@@ -174,9 +163,9 @@ class AVLNode(object):
 
     def setAll(self):
         if self.isReal:
-            self.setBalanceFactor()
             self.setHeight(max(self.right.height, self.left.height) + 1)
             self.setSize()
+            self.setBalanceFactor()
 
     """finds a successor to node
     @rtype: AVLNode
@@ -253,9 +242,8 @@ class AVLTreeList(object):
     def updateAllNodes(self, node):
         node.setAll()
         while node.getParent() != None:
-            node.setAll()
             node = node.getParent()
-
+            node.setAll()
     """inserts val at position i in the list
     @type i: int
     @pre: 0 <= i <= self.length()
@@ -440,10 +428,7 @@ class AVLTreeList(object):
 
         # the tree has only one node
         if self.size == 1:
-            self.root = None
-            self.min = None
-            self.max = None
-            self.size = 0
+            self.setRoot(None)
             return 0
 
         parent = self.deleteBST(i)
@@ -601,7 +586,6 @@ class AVLTreeList(object):
         if parent is not None:
             if parent.getLeft() == current:
                 cameFromLeft = True
-                parent.setLeft(virtualNode)
             current = parent
             parent = parent.getParent()
         elif parent is None:
@@ -647,7 +631,7 @@ class AVLTreeList(object):
                         newRoot = current.getRight()
                         tempo.setRoot(newRoot)
                         right.concat(tempo)
-                    else: # not current.getRight().isReal:
+                    elif not current.getRight().isReal:
                         right.insert(right.size, current.value)
 
                 elif not cameFromLeft:
@@ -663,7 +647,6 @@ class AVLTreeList(object):
                 #updating cameFromLeft
                 if parent.getLeft() == current:
                     cameFromLeft = True
-                    parent.setLeft(virtualNode)
                 else: #
                     cameFromLeft = False
 
@@ -793,7 +776,6 @@ class AVLTreeList(object):
         self.updateAllNodes(x.getLeft())
         self.size = newSize
         self.max = lstMax
-        self.root.setAll()
 
     """searches for a *value* in the list
     @note Run in O(n) time
@@ -864,6 +846,12 @@ class AVLTreeList(object):
     """
 
     def setRoot(self, root):
+        if root is None:
+            self.root = None
+            self.max = None
+            self.min = None
+            self.size = 0
+            return
         root.setParent(None)
         self.root = root
         self.size = root.size
@@ -887,11 +875,7 @@ class AVLTreeList(object):
         self.max = lst.max
         self.min = lst.min
         self.size = lst.size
-        lst.root = None
-        lst.max = None
-        lst.min = None
-        lst.size = 0
-
+        lst.setRoot(None)
 
     """performs a left rotation
     @type Node: AVLNode
