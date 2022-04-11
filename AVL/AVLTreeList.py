@@ -463,10 +463,10 @@ class AVLTreeList(object):
 
                     elif rightBF == -1 or rightBF == 0:
                         self.left_rotation(parent)
+                        changes_counter += 1
                         if bool:
                             self.update_all_nodes(parent)
-                            return 1 + changes_counter
-                        changes_counter += 2
+                            return changes_counter
                         parent = parent.getParent()
                         continue
 
