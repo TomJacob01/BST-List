@@ -581,7 +581,7 @@ class AVLTreeList(object):
     right is an AVLTreeList representing the list from index i+1, and val is the value at the i'th index.
     """
 
-        def split(self, i):
+    def split(self, i):
         nodeOfValue = self.tree_select_rec(self.root, i + 1)
         current = nodeOfValue
         parent = current.getParent()
