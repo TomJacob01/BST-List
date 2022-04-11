@@ -447,6 +447,15 @@ class AVLTreeList(object):
         self.size -= 1
 
         # Update tree, and perform rotations
+        return self.rebalance(parent)
+
+    """balances the nodes up the tree from parent until self.root
+    @type parent: AVLNode
+    @rtype: int
+    @returns: the number of rebalancing operation due to AVL rebalancing
+    """
+
+    def rebalance(self, parent):
         changes_counter = 0
         while parent is not None:
 
@@ -502,7 +511,6 @@ class AVLTreeList(object):
 
             # Shouldn't get here
             raise AssertionError("abs(BF) > 2 - Error!")
-
         return changes_counter
 
     """returns the value of the first item in the list
@@ -622,18 +630,17 @@ class AVLTreeList(object):
 
             # adding to left
             elif not cameFromLeft:
-                if parent is None:
-                    if left.size == 0:
-                        left.steal_root(left_helper)
-                        if isRoot:
-                            break
+                if left.size == 0:
+                    left.steal_root(left_helper)
+                    if isRoot:
+                        break
                 if current.getLeft().isReal:
                     if left.size != 0:
                         left_helper.steal_root(left)
                     new_Node = AVLNode(current.value)
                     left.set_root(current.getLeft())
                     left.join(new_Node, left_helper)
-                else:
+                else:  # not current.getLeft().isReal
                     left.insert(0, current.value)
                     left_helper = AVLTreeList()
 
@@ -768,7 +775,7 @@ class AVLTreeList(object):
 
         # Updating nodes
         x.getRight().setAll()
-        self.update_all_nodes(x.getLeft())
+        self.rebalance(x.getLeft())
         self.size = newSize
         self.max = lstMax
         lst.set_root(None)
