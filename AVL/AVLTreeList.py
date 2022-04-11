@@ -1,3 +1,14 @@
+# username1 - Tomjakob
+# id1      - 208938332
+# name1    - Tom Jacob
+# username2 - adelinay
+# id2      - 209225069
+# name2    - Adelina Yershov
+
+
+"""A class representing a node in an AVL tree"""
+
+
 class AVLNode(object):
     """Constructor, you are allowed to add more fields.
     @type value: str
