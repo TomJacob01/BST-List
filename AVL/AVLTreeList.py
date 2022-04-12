@@ -178,28 +178,6 @@ class AVLNode(object):
             self.setSize()
             self.setBalanceFactor()
 
-    """finds a successor to node
-    @rtype: AVLNode
-    @returns: the successor of node, or None if there is not a successor
-    """
-
-    def successor(self):
-        if self.isReal:
-            current = self.getRight()
-            if current.isReal:
-                while current.getLeft().isReal:
-                    current = current.getLeft()
-                return current
-            parent = self.getParent()
-            current = self
-            while parent is not None:
-                if parent.getLeft() is current:
-                    return parent
-                current = parent
-                parent = current.getParent()
-
-        return None
-
 
 """
 A class implementing the ADT list, using an AVL tree.
@@ -254,11 +232,11 @@ class AVLTreeList(object):
         current_size = current.getLeft().getSize()
 
         while i >= 0:
-            
+
             # stop condition
             if current_size == i:
                 return current
-            
+
             # we go right
             if current_size < i:
                 i -= (current_size + 1)
@@ -268,8 +246,8 @@ class AVLTreeList(object):
                 else:
                     current_size = current.getLeft().getSize()
                 continue
-                
-            # we go left    
+
+            # we go left
             if current_size > i:
                 current = current.getLeft()
                 if current.getLeft().isReal == False:
@@ -349,7 +327,7 @@ class AVLTreeList(object):
         node = self.retrieve_helper(i)
 
         if node == self.min:
-            successor = node.successor
+            successor = self.retrieve_helper(i + 1)
             self.min = successor
 
         elif node == self.max:
