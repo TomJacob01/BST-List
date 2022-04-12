@@ -234,21 +234,43 @@ class AVLTreeList(object):
     @pre: 0 <= i < self.length()
     @param i: index in the list
     @rtype: str
-    @returns: the the value of the i'th item in the list
+    @returns: the value of the i'th item in the list
     """
 
     def retrieve(self, i):
-        out = self.tree_select_rec(self.root, i + 1)
+        out = self.retrieve_helper(i)
         return out.getValue()
 
-    def tree_select_rec(self, node, k):
-        rank = node.getLeft().getSize() + 1
-        if k == rank:
-            return node
-        elif k < rank:
-            return self.tree_select_rec(node.getLeft(), k)
-        else:
-            return self.tree_select_rec(node.getRight(), k - rank)
+    """retrieves the i'th item in the list
+        @type i: int
+        @pre: 0 <= i < self.length()
+        @param i: index in the list
+        @rtype: AVLNode
+        @returns: the the value of the i'th item in the list
+        """
+
+    def retrieve_helper(self, i):
+        current = self.root
+        current_size = current.getLeft().getSize()
+
+        while i >= 0:
+            if current_size == i:
+                return current
+            if current_size < i:
+                i -= (current_size + 1)
+                current = current.getRight()
+                if current.isReal == False:
+                    current_size = 0
+                else:
+                    current_size = current.getLeft().getSize()
+                continue
+            if current_size > i:
+                current = current.getLeft()
+                if current.getLeft().isReal == False:
+                    current_size = 0
+                else:
+                    current_size = current.getLeft().getSize()
+                continue
 
     def update_all_nodes(self, node):
         node.setAll()
@@ -292,7 +314,7 @@ class AVLTreeList(object):
 
         # Insert new node in the middle
         elif 0 < i < self.size:
-            parent = self.tree_select_rec(self.root, i)
+            parent = self.retrieve_helper(i - 1)
             current = parent.getRight()
             if current.isRealNode():
                 while current.getLeft().isRealNode() is True:
@@ -318,14 +340,14 @@ class AVLTreeList(object):
 
     def deleteBST(self, i):
 
-        node = self.tree_select_rec(self.root, i + 1)
+        node = self.retrieve_helper(i)
 
         if node == self.min:
-            successor = self.tree_select_rec(self.root, i + 2)
+            successor = node.successor
             self.min = successor
 
         elif node == self.max:
-            predecessor = self.tree_select_rec(self.root, i)
+            predecessor = self.retrieve_helper(i - 1)
             self.max = predecessor
 
         parent = node.getParent()
@@ -367,7 +389,7 @@ class AVLTreeList(object):
 
         # The node has right and left child
         # Find successor and swap it with the node to delete
-        successor = self.tree_select_rec(self.root, i + 2)
+        successor = self.retrieve_helper(i + 1)
         tmp = successor.value
         successor.value = node.value
         node.value = tmp
@@ -554,7 +576,7 @@ class AVLTreeList(object):
     """
 
     def split(self, i):
-        nodeOfValue = self.tree_select_rec(self.root, i + 1)
+        nodeOfValue = self.retrieve_helper(i)
         current = nodeOfValue
         parent = current.getParent()
         right = AVLTreeList()
@@ -1017,3 +1039,4 @@ class AVLTreeList(object):
         zipped_lines = zip(left, right)
         lines = [first_line, second_line] + [a + u * ' ' + b for a, b in zipped_lines]
         return lines, n + m + u, max(p, q) + 2, n + u // 2
+
