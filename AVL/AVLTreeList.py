@@ -254,8 +254,12 @@ class AVLTreeList(object):
         current_size = current.getLeft().getSize()
 
         while i >= 0:
+            
+            # stop condition
             if current_size == i:
                 return current
+            
+            # we go right
             if current_size < i:
                 i -= (current_size + 1)
                 current = current.getRight()
@@ -264,6 +268,8 @@ class AVLTreeList(object):
                 else:
                     current_size = current.getLeft().getSize()
                 continue
+                
+            # we go left    
             if current_size > i:
                 current = current.getLeft()
                 if current.getLeft().isReal == False:
@@ -1039,4 +1045,3 @@ class AVLTreeList(object):
         zipped_lines = zip(left, right)
         lines = [first_line, second_line] + [a + u * ' ' + b for a, b in zipped_lines]
         return lines, n + m + u, max(p, q) + 2, n + u // 2
-
