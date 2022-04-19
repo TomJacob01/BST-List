@@ -170,6 +170,7 @@ class AVLNode(object):
 
     """sets the balance factor,height and size of the node
     @note No parameters
+    @note Run in O(1) time
     """
 
     def setAll(self):
@@ -208,6 +209,7 @@ class AVLTreeList(object):
         return False
 
     """retrieves the value of the i'th item in the list
+    @note Run in O(log(n)) time
     @type i: int
     @pre: 0 <= i < self.length()
     @param i: index in the list
@@ -220,12 +222,13 @@ class AVLTreeList(object):
         return out.getValue()
 
     """retrieves the i'th item in the list
-        @type i: int
-        @pre: 0 <= i < self.length()
-        @param i: index in the list
-        @rtype: AVLNode
-        @returns: the the value of the i'th item in the list
-        """
+    @note Run in O(log(n)) time
+    @type i: int
+    @pre: 0 <= i < self.length()
+    @param i: index in the list
+    @rtype: AVLNode
+    @returns: the the value of the i'th item in the list
+    """
 
     def retrieve_helper(self, i):
         current = self.root
@@ -256,6 +259,11 @@ class AVLTreeList(object):
                     current_size = current.getLeft().getSize()
                 continue
 
+    """update all the nodes from node up to self.root
+    @note Run in O(log(n)) time
+    @type node: AVLNode
+    """
+
     def update_all_nodes(self, node):
         node.setAll()
         while node.getParent() is not None:
@@ -263,6 +271,7 @@ class AVLTreeList(object):
             node.setAll()
 
     """inserts val at position i in the list
+    @note Run in O(log(n)) time
     @type i: int
     @pre: 0 <= i <= self.length()
     @param i: The intended index in the list to which we insert val
@@ -315,6 +324,7 @@ class AVLTreeList(object):
         return self.rebalance(current, True)
 
     """deletes the i'th item in the BST
+    @note Run in O(log(n)) time
     @type i: int
     @pre: 0 <= i < self.length()
     @param i: The intended index in the BST to be deleted
@@ -384,6 +394,7 @@ class AVLTreeList(object):
         return new_parent
 
     """deletes the i'th item in the list
+    @note Run in O(log(n)) time
     @type i: int
     @pre: 0 <= i < self.length()
     @param i: The intended index in the list to be deleted
@@ -405,6 +416,7 @@ class AVLTreeList(object):
         return self.rebalance(parent)
 
     """balances the nodes up the tree from parent until self.root
+    @note Run in O(log(n)) time
     @type parent: AVLNode
     @rtype: int
     @returns: the number of rebalancing operation due to AVL rebalancing
@@ -551,6 +563,7 @@ class AVLTreeList(object):
         return self.size
 
     """splits the list at the i'th index
+    @note Run in O(log(n)) time
     @type i: int
     @pre: 0 <= i < self.length()
     @param i: The intended index in the list according to whom we split
@@ -628,6 +641,7 @@ class AVLTreeList(object):
         return [left, nodeOfValue.value, right]
 
     """concatenates lst to self
+    @note Run in O(log(n)) time
     @type lst: AVLTreeList
     @param lst: a list to be concatenated after self
     @rtype: int
@@ -676,12 +690,13 @@ class AVLTreeList(object):
         return abs(selfHeight - lstHeight)
 
     """joins lst to self
-        @type lst: AVLTreeList
-        @param lst: a list to be concatenated after self
-        @type x: AVLNode
-        @param x: a node to help join self and lst
-        @rtype: None
-        """
+    @note Run in O(log(n)) time
+    @type lst: AVLTreeList
+    @param lst: a list to be concatenated after self
+    @type x: AVLNode
+    @param x: a node to help join self and lst
+    @rtype: None
+    """
 
     def join(self, x, lst):
         newSize = self.size + lst.size + 1
@@ -695,7 +710,7 @@ class AVLTreeList(object):
             theRoot = self.root
             otherRoot = lst.root
 
-        # Special conditions- concat an empty list
+        # Special conditions- join an empty list
         if self.root is None and lst.root is None:
             self.insert(0, x.value)
             return
@@ -803,6 +818,7 @@ class AVLTreeList(object):
         return searchingAValue(self.root, val, index)
 
     """sets the root of the tree and updates all fields
+    @note Run in O(log(n)) time
     @param root: the new root we want to have 
     @type root: AVLNode
     @rtype: None
@@ -828,6 +844,7 @@ class AVLTreeList(object):
         self.max = current
 
     """self takes place of lst, we use if for concat
+    @note Run in O(1) time
     @param lst: the list we want to steal from and delete
     @type lst: AVLTreeList
     @rtype: None
@@ -973,53 +990,3 @@ class AVLTreeList(object):
                 n.setAll()
 
         return
-
-    def display(self):
-        lines, *_ = self._display_aux(self.root)
-        for line in lines:
-            print(line)
-
-    def _display_aux(self, node):
-        """Returns list of strings, width, height, and horizontal coordinate of the root."""
-        # No child.
-        if node.getLeft().isRealNode() is False and node.getRight().isRealNode() is False:
-            line = '%s (%s,%s,%s)' % (node.getValue(), node.getHeight(), node.getSize(), node.getBalanceFactor())
-            width = len(line)
-            height = 1
-            middle = width // 2
-            return [line], width, height, middle
-
-        # Only left child.
-        if node.getRight().isRealNode() is False:
-            lines, n, p, x = self._display_aux(node.getLeft())
-            s = '%s (%s,%s,%s)' % (node.getValue(), node.getHeight(), node.getSize(), node.getBalanceFactor())
-            u = len(s)
-            first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s
-            second_line = x * ' ' + '/' + (n - x - 1 + u) * ' '
-            shifted_lines = [line + u * ' ' for line in lines]
-            return [first_line, second_line] + shifted_lines, n + u, p + 2, n + u // 2
-
-        # Only right child.
-        if node.getLeft().isRealNode() is False:
-            lines, n, p, x = self._display_aux(node.getRight())
-            s = '%s (%s,%s,%s)' % (node.getValue(), node.getHeight(), node.getSize(), node.getBalanceFactor())
-            u = len(s)
-            first_line = s + x * '_' + (n - x) * ' '
-            second_line = (u + x) * ' ' + '\\' + (n - x - 1) * ' '
-            shifted_lines = [u * ' ' + line for line in lines]
-            return [first_line, second_line] + shifted_lines, n + u, p + 2, u // 2
-
-        # Two children.
-        left, n, p, x = self._display_aux(node.getLeft())
-        right, m, q, y = self._display_aux(node.getRight())
-        s = '%s (%s,%s,%s)' % (node.getValue(), node.getHeight(), node.getSize(), node.getBalanceFactor())
-        u = len(s)
-        first_line = (x + 1) * ' ' + (n - x - 1) * '_' + s + y * '_' + (m - y) * ' '
-        second_line = x * ' ' + '/' + (n - x - 1 + u + y) * ' ' + '\\' + (m - y - 1) * ' '
-        if p < q:
-            left += [n * ' '] * (q - p)
-        elif q < p:
-            right += [m * ' '] * (p - q)
-        zipped_lines = zip(left, right)
-        lines = [first_line, second_line] + [a + u * ' ' + b for a, b in zipped_lines]
-        return lines, n + m + u, max(p, q) + 2, n + u // 2
