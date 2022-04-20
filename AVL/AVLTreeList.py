@@ -839,16 +839,20 @@ class AVLTreeList(object):
             self.min = None
             self.size = 0
             return
+
         root.setParent(None)
         self.root = root
         self.size = root.size
+
         current = root
         while current.getLeft().isReal:
             current = current.getLeft()
+
         self.min = current
         current = root
         while current.getRight().isReal:
             current = current.getRight()
+
         self.max = current
 
     """self takes place of lst, we use if for concat
@@ -877,6 +881,7 @@ class AVLTreeList(object):
         rNode = node.getRight()
         pNode = node.getParent()
         rlNode = rNode.getLeft()
+
         if pNode is not None:
             if pNode.left is node:
                 pNode.setLeft(rNode)
@@ -885,6 +890,7 @@ class AVLTreeList(object):
         elif pNode is None:
             rNode.setParent(None)
             self.root = rNode
+
         rNode.setLeft(node)
         node.setRight(rlNode)
 
@@ -908,6 +914,7 @@ class AVLTreeList(object):
         pNode = node.getParent()
         lNode = node.getLeft()
         lrNode = lNode.getRight()
+
         if pNode is not None:
             if pNode.left is node:
                 pNode.setLeft(lNode)
@@ -916,6 +923,7 @@ class AVLTreeList(object):
         elif pNode is None:
             lNode.setParent(None)
             self.root = lNode
+
         lNode.setRight(node)
         node.setLeft(lrNode)
 
@@ -942,6 +950,7 @@ class AVLTreeList(object):
         theNode = lNode.getRight()
         aNode = theNode.getLeft()
         bNode = theNode.getRight()
+
         if pNode is not None:
             if pNode.left is node:
                 pNode.setLeft(theNode)
@@ -950,6 +959,7 @@ class AVLTreeList(object):
         elif pNode is None:
             theNode.parent = None
             self.root = theNode
+
         theNode.setRight(node)
         theNode.setLeft(lNode)
         node.setLeft(bNode)
@@ -978,6 +988,7 @@ class AVLTreeList(object):
         theNode = rNode.getLeft()
         aNode = theNode.getLeft()
         bNode = theNode.getRight()
+
         if pNode is not None:
             if pNode.left is node:
                 pNode.setLeft(theNode)
@@ -986,6 +997,7 @@ class AVLTreeList(object):
         elif pNode is None:
             theNode.parent = None
             self.root = theNode
+
         theNode.setLeft(node)
         theNode.setRight(rNode)
         node.setRight(aNode)
