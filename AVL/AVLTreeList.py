@@ -208,6 +208,14 @@ class AVLTreeList(object):
             return True
         return False
 
+    """returns the root of the tree representing the list
+
+    @rtype: AVLNode
+    @returns: the root, None if the list is empty
+    """
+    def getRoot(self):
+        return self.root
+
     """retrieves the value of the i'th item in the list
     @note Run in O(log(n)) time
     @type i: int
