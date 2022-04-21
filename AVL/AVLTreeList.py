@@ -735,6 +735,9 @@ class AVLTreeList(object):
 
         # we go down on the bigger tree
         for i in range(heightDiff):
+            if current.getHeight() <= theRoot.getHeight():
+                break
+
             if isSelfBigger:
                 if current.getRight().isReal:
                     current = current.getRight()
