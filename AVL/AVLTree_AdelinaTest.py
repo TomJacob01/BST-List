@@ -126,7 +126,7 @@ class AVLTreeListTest(unittest.TestCase):
         lst.insert(0, "a")
 
         expected = [[], "a", []]
-        result = lst.split(0)
+        result,_ = lst.split(0)
 
         self.assertListEqual(expected[0], result[0].listToArray())
         self.assertEqual(expected[1], result[1])
@@ -137,11 +137,11 @@ class AVLTreeListTest(unittest.TestCase):
         for i in range(50):
             # Build tree
             lst = AVLTreeList()
-            for i in range(50):
+            for i in range(5000):
                 lst.insert(i, str(i))
 
-            expected = [[str(x) for x in range(i)], str(i), [str(x) for x in range(i + 1, 50)]]
-            result = lst.split(i)
+            expected = [[str(x) for x in range(i)], str(i), [str(x) for x in range(i + 1, 5000)]]
+            result,_ = lst.split(i)
 
             self.assertListEqual(expected[0], result[0].listToArray(), "split(i) failed for i = {}".format(i))
             self.assertEqual(expected[1], result[1], "split(i) failed for i = {}".format(i))

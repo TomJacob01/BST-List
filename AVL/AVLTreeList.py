@@ -581,6 +581,8 @@ class AVLTreeList(object):
     """
 
     def split(self, i):
+        join_costs = []
+
         nodeOfValue = self.retrieve_helper(i)
         current = nodeOfValue
         parent = current.getParent()
@@ -611,7 +613,8 @@ class AVLTreeList(object):
                 if current.getRight().isReal:
                     right.insert(right.size, current.value)
                     right_helper.set_root(current.getRight())
-                    right.concat(right_helper)
+                    height_diff = right.concat(right_helper)
+                    join_costs.append(height_diff)
 
                 elif not current.getRight().isReal:
                     right.insert(right.size, current.value)
@@ -630,7 +633,8 @@ class AVLTreeList(object):
                         left_helper.steal_root(left)
                     new_Node = AVLNode(current.value)
                     left.set_root(current.getLeft())
-                    left.join(new_Node, left_helper)
+                    height_diff = left.join(new_Node, left_helper)
+                    join_costs.append(height_diff)
                 else:  # not current.getLeft().isReal
                     left.insert(0, current.value)
                     left_helper = AVLTreeList()
@@ -646,7 +650,7 @@ class AVLTreeList(object):
             current = parent
             parent = parent.getParent()
 
-        return [left, nodeOfValue.value, right]
+        return [left, nodeOfValue.value, right], join_costs
 
     """concatenates lst to self
     @note Run in O(log(n)) time
@@ -721,14 +725,14 @@ class AVLTreeList(object):
         # Special conditions- join an empty list
         if self.root is None and lst.root is None:
             self.insert(0, x.value)
-            return
+            return 0
         if lst.root is None:
             self.insert(self.size, x.value)
-            return
+            return self.root.getHeight()
         if self.root is None:
             self.steal_root(lst)
             self.insert(0, x.value)
-            return
+            return lst.root.getHeight()
 
         heightDiff = otherRoot.getHeight() - theRoot.getHeight()
         current = otherRoot
@@ -775,6 +779,8 @@ class AVLTreeList(object):
         self.size = newSize
         self.max = lstMax
         lst.set_root(None)
+
+        return abs(heightDiff)
 
     """searches for a *value* in the list
     @note Run in O(n) time
