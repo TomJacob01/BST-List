@@ -137,8 +137,8 @@ class AVLTreeListTest(unittest.TestCase):
         for i in range(50):
             # Build tree
             lst = AVLTreeList()
-            for i in range(50):
-                lst.insert(i, str(i))
+            for j in range(50):
+                lst.insert(j, str(j))
 
             expected = [[str(x) for x in range(i)], str(i), [str(x) for x in range(i + 1, 50)]]
             result = lst.split(i)
