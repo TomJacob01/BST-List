@@ -1,4 +1,3 @@
-# username1 - Tomjakob
 # id1      - 208938332
 # name1    - Tom Jacob
 # username2 - adelinay
@@ -209,7 +208,6 @@ class AVLTreeList(object):
         return False
 
     """returns the root of the tree representing the list
-
     @rtype: AVLNode
     @returns: the root, None if the list is empty
     """
@@ -609,9 +607,9 @@ class AVLTreeList(object):
             # adding to right
             if cameFromLeft:
                 if current.getRight().isReal:
-                    right.insert(right.size, current.value)
+                    new_Node = AVLNode(current.value)
                     right_helper.set_root(current.getRight())
-                    right.concat(right_helper)
+                    right.join(new_Node, right_helper)
 
                 elif not current.getRight().isReal:
                     right.insert(right.size, current.value)
