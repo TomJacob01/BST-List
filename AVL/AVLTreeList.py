@@ -225,6 +225,10 @@ class AVLTreeList(object):
     """
 
     def retrieve(self, i):
+        # i is larger then self.size
+        if self.size <= i:
+            return None
+
         out = self.retrieve_helper(i)
         return out.getValue()
 
@@ -410,6 +414,9 @@ class AVLTreeList(object):
     """
 
     def delete(self, i):
+        # i is larger then self.size
+        if self.size <= i:
+            return -1
 
         # the tree has only one node
         if self.size == 1:
@@ -445,6 +452,7 @@ class AVLTreeList(object):
                     self.update_all_nodes(parent)
                     return changes_counter
                 parent = parent.getParent()
+                changes_counter += 1
                 continue
 
             if -2 < BF < 2 and oldHeight != newHeight:
