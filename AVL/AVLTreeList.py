@@ -452,7 +452,6 @@ class AVLTreeList(object):
                     self.update_all_nodes(parent)
                     return changes_counter
                 parent = parent.getParent()
-                changes_counter += 1
                 continue
 
             if -2 < BF < 2 and oldHeight != newHeight:
